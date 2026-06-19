@@ -12,7 +12,7 @@ const protect = (req, res, next) => {
 };
 
 const adminOnly = (req, res, next) => {
-  if (req.user.role !== "admin") return res.status(403).json({ message: "Akses ditolak" });
+  if (!req.user || req.user.role !== "admin") return res.status(403).json({ message: "Akses ditolak" });
   next();
 };
 

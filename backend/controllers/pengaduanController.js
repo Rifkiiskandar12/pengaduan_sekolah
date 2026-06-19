@@ -19,6 +19,12 @@ exports.getOne = async (req, res, next) => {
   try {
     const data = await Pengaduan.findById(req.params.id).populate("pelapor", "name email");
     if (!data) return res.status(404).json({ message: "Tidak ditemukan" });
+
+    // Cek otorisasi: siswa hanya bisa melihat pengaduan miliknya sendiri
+    if (req.user.role !== "admin" && data.pelapor._id.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Akses ditolak" });
+    }
+
     res.json(data);
   } catch (err) { next(err); }
 };
@@ -35,16 +41,41 @@ exports.create = async (req, res, next) => {
 // PUT /api/pengaduan/:id
 exports.update = async (req, res, next) => {
   try {
-    const data = await Pengaduan.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const data = await Pengaduan.findById(req.params.id);
     if (!data) return res.status(404).json({ message: "Tidak ditemukan" });
-    res.json(data);
+
+    if (req.user.role === "admin") {
+      // Admin hanya diperbolehkan mengupdate status pengaduan
+      if (req.body.status !== undefined) {
+        data.status = req.body.status;
+      }
+    } else {
+      // Siswa hanya bisa mengupdate pengaduan miliknya sendiri
+      if (data.pelapor.toString() !== req.user.id) {
+        return res.status(403).json({ message: "Akses ditolak" });
+      }
+      // Siswa hanya bisa mengupdate jika status masih "pending"
+      if (data.status !== "pending") {
+        return res.status(400).json({ message: "Pengaduan yang sedang diproses atau selesai tidak dapat diubah" });
+      }
+      // Siswa hanya bisa mengubah judul, isi, dan kategori
+      const { judul, isi, kategori } = req.body;
+      if (judul !== undefined) data.judul = judul;
+      if (isi !== undefined) data.isi = isi;
+      if (kategori !== undefined) data.kategori = kategori;
+    }
+
+    await data.save();
+    const updatedData = await Pengaduan.findById(data._id).populate("pelapor", "name email");
+    res.json(updatedData);
   } catch (err) { next(err); }
 };
 
 // DELETE /api/pengaduan/:id
 exports.remove = async (req, res, next) => {
   try {
-    await Pengaduan.findByIdAndDelete(req.params.id);
+    const data = await Pengaduan.findByIdAndDelete(req.params.id);
+    if (!data) return res.status(404).json({ message: "Tidak ditemukan" });
     res.json({ message: "Berhasil dihapus" });
   } catch (err) { next(err); }
 };
