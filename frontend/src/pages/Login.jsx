@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -63,6 +64,10 @@ export default function Login() {
         >
           {loading ? "Memproses..." : "Login"}
         </button>
+
+        <p className="text-sm text-center mt-4">
+          Belum punya akun? <Link to="/register" className="text-blue-600">Daftar</Link>
+        </p>
       </form>
     </div>
   );
