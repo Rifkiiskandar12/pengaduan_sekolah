@@ -1,16 +1,31 @@
 import { useEffect, useState } from "react";
 import { usePengaduan } from "../hooks/usePengaduan";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
-  const { getStats, loading, error } = usePengaduan();
+  const { getStats, getAll, loading, error } = usePengaduan();
+  const { getUser } = useAuth();
+  const user = getUser();
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
-    getStats().then(setStats).catch(() => {});
+    if (isAdmin) {
+      getStats().then(setStats).catch(() => {});
+    } else {
+      getAll().then((data) => {
+        setStats({
+          total: data.length,
+          pending: data.filter((d) => d.status === "pending").length,
+          diproses: data.filter((d) => d.status === "diproses").length,
+          selesai: data.filter((d) => d.status === "selesai").length,
+        });
+      }).catch(() => {});
+    }
   }, []);
 
   const cards = [
-    { label: "Total Pengaduan", value: stats?.total, color: "bg-blue-500" },
+    { label: isAdmin ? "Total Pengaduan" : "Pengaduan Saya", value: stats?.total, color: "bg-blue-500" },
     { label: "Pending", value: stats?.pending, color: "bg-yellow-500" },
     { label: "Diproses", value: stats?.diproses, color: "bg-indigo-500" },
     { label: "Selesai", value: stats?.selesai, color: "bg-green-500" },
