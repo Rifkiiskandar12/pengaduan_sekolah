@@ -10,13 +10,18 @@ const statusColor = {
 export default function ListPengaduan() {
   const [data, setData] = useState([]);
   const [kategori, setKategori] = useState("");
-  const { getAll, loading, error } = usePengaduan();
+  const { getAll, update, loading, error } = usePengaduan();
 
   const fetchData = async () => {
     const params = {};
     if (kategori) params.kategori = kategori;
     const res = await getAll(params);
     setData(res);
+  };
+
+  const handleStatusChange = async (id, status) => {
+    await update(id, { status });
+    fetchData();
   };
 
   useEffect(() => {
@@ -65,9 +70,15 @@ export default function ListPengaduan() {
                 <td className="px-4 py-2">{item.judul}</td>
                 <td className="px-4 py-2 capitalize">{item.kategori}</td>
                 <td className="px-4 py-2">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${statusColor[item.status]}`}>
-                    {item.status}
-                  </span>
+                  <select
+                    value={item.status}
+                    onChange={(e) => handleStatusChange(item._id, e.target.value)}
+                    className={`px-2 py-1 rounded text-xs font-medium border-0 ${statusColor[item.status]}`}
+                  >
+                    <option value="pending">pending</option>
+                    <option value="diproses">diproses</option>
+                    <option value="selesai">selesai</option>
+                  </select>
                 </td>
                 <td className="px-4 py-2">
                   {new Date(item.createdAt).toLocaleDateString("id-ID")}
