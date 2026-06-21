@@ -58,5 +58,18 @@ export const usePengaduan = () => {
     }
   };
 
-  return { getAll, create, update, remove, loading, error };
+  const getStats = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/pengaduan/dashboard/stats");
+      return res.data;
+    } catch (err) {
+      setError(err.response?.data?.message || "Gagal mengambil statistik");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { getAll, create, update, remove, getStats, loading, error };
 };
