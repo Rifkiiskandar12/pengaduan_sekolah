@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { usePengaduan } from "../hooks/usePengaduan";
+import { useAuth } from "../hooks/useAuth";
 
 const statusColor = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -11,6 +12,8 @@ export default function ListPengaduan() {
   const [data, setData] = useState([]);
   const [kategori, setKategori] = useState("");
   const { getAll, update, loading, error } = usePengaduan();
+  const { getUser } = useAuth();
+  const user = getUser();
 
   const fetchData = async () => {
     const params = {};
@@ -70,15 +73,21 @@ export default function ListPengaduan() {
                 <td className="px-4 py-2">{item.judul}</td>
                 <td className="px-4 py-2 capitalize">{item.kategori}</td>
                 <td className="px-4 py-2">
-                  <select
-                    value={item.status}
-                    onChange={(e) => handleStatusChange(item._id, e.target.value)}
-                    className={`px-2 py-1 rounded text-xs font-medium border-0 ${statusColor[item.status]}`}
-                  >
-                    <option value="pending">pending</option>
-                    <option value="diproses">diproses</option>
-                    <option value="selesai">selesai</option>
-                  </select>
+                  {user?.role === "admin" ? (
+                    <select
+                      value={item.status}
+                      onChange={(e) => handleStatusChange(item._id, e.target.value)}
+                      className={`px-2 py-1 rounded text-xs font-medium border-0 ${statusColor[item.status]}`}
+                    >
+                      <option value="pending">pending</option>
+                      <option value="diproses">diproses</option>
+                      <option value="selesai">selesai</option>
+                    </select>
+                  ) : (
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${statusColor[item.status]}`}>
+                      {item.status}
+                    </span>
+                  )}
                 </td>
                 <td className="px-4 py-2">
                   {new Date(item.createdAt).toLocaleDateString("id-ID")}
