@@ -8,6 +8,6 @@ router.get("/", protect, ctrl.getAll);
 router.get("/:id", protect, ctrl.getOne);
 router.post("/", protect, ctrl.create);
 router.put("/:id", protect, ctrl.update);
-router.delete("/:id", protect, adminOnly, ctrl.remove);
+router.delete("/:id", protect, ctrl.remove);
 
 module.exports = router;
