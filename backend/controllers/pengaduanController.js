@@ -74,8 +74,16 @@ exports.update = async (req, res, next) => {
 // DELETE /api/pengaduan/:id
 exports.remove = async (req, res, next) => {
   try {
-    const data = await Pengaduan.findByIdAndDelete(req.params.id);
+    const data = await Pengaduan.findById(req.params.id);
     if (!data) return res.status(404).json({ message: "Tidak ditemukan" });
+
+    if (req.user.role !== "admin" && data.pelapor.toString() !== req.user.id)
+      return res.status(403).json({ message: "Akses ditolak" });
+
+    if (req.user.role === "siswa" && data.status !== "pending")
+      return res.status(403).json({ message: "Hanya bisa hapus pengaduan berstatus pending" });
+
+    await Pengaduan.findByIdAndDelete(req.params.id);
     res.json({ message: "Berhasil dihapus" });
   } catch (err) { next(err); }
 };

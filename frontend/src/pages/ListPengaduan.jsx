@@ -119,14 +119,22 @@ export default function ListPengaduan() {
                 <td className="px-4 py-2">
                   {new Date(item.createdAt).toLocaleDateString("id-ID")}
                 </td>
-                <td className="px-4 py-2 flex gap-2">
+               <td className="px-4 py-2 flex gap-2">
                   <button
                     onClick={() => navigate(`/pengaduan/${item._id}`)}
                     className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600"
                   >
                     Detail
                   </button>
-                  {user?.role === "admin" && (
+                  {(user?.role === "siswa" && item.status === "pending") && (
+                    <button
+                      onClick={() => navigate(`/pengaduan/edit/${item._id}`)}
+                      className="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  {(user?.role === "admin" || (user?.role === "siswa" && item.status === "pending")) && (
                     <button
                       onClick={() => handleDelete(item._id)}
                       className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"

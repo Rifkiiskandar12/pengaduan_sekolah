@@ -7,6 +7,7 @@ import ListPengaduan from "./pages/ListPengaduan";
 import DetailPengaduan from "./pages/DetailPengaduan";
 import MainLayout from "./layouts/MainLayout";
 import PrivateRoute from "./utils/PrivateRoute";
+import EditPengaduan from "./pages/EditPengaduan";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         <Route element={<PrivateRoute />}>
+        <Route path="/pengaduan/edit/:id" element={<EditPengaduan />} />
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/pengaduan" element={<ListPengaduan />} />
