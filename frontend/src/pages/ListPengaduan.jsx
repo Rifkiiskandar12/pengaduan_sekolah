@@ -15,6 +15,8 @@ export default function ListPengaduan() {
   const [data, setData] = useState([]);
   const [kategori, setKategori] = useState("");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const limitPerPage = 5;
   const { getAll, update, remove, loading, error } = usePengaduan();
   const { getUser } = useAuth();
   const user = getUser();
@@ -27,6 +29,7 @@ export default function ListPengaduan() {
     if (search) params.search = search;
     const res = await getAll(params);
     setData(res);
+    setPage(1);
   };
 
   const handleStatusChange = async (id, status) => {
@@ -36,51 +39,40 @@ export default function ListPengaduan() {
   };
 
   const handleDelete = async (id) => {
-  if (!confirm("Yakin hapus pengaduan ini?")) return;
-  try {
-    await remove(id);
-    fetchData();
-    showToast("Pengaduan berhasil dihapus!", "success");
-  } catch (err) {
-    showToast("Gagal hapus pengaduan", "error");
-  }
-};
+    if (!confirm("Yakin hapus pengaduan ini?")) return;
+    try {
+      await remove(id);
+      fetchData();
+      showToast("Pengaduan berhasil dihapus!", "success");
+    } catch {
+      showToast("Gagal hapus pengaduan", "error");
+    }
+  };
 
-  useEffect(() => {
-    fetchData();
-  }, [kategori]);
+  useEffect(() => { fetchData(); }, [kategori]);
+
+  const totalPages = Math.ceil(data.length / limitPerPage);
+  const paginated = data.slice((page - 1) * limitPerPage, page * limitPerPage);
 
   return (
     <div>
-    {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
-    <h1 className="text-2xl font-bold mb-4">Daftar Pengaduan</h1>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
+      <h1 className="text-2xl font-bold mb-4">Daftar Pengaduan</h1>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Cari judul..."
-          value={search}
+        <input type="text" placeholder="Cari judul..." value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && fetchData()}
-          className="border rounded px-3 py-2 flex-1 min-w-40"
-        />
-        <select
-          value={kategori}
-          onChange={(e) => setKategori(e.target.value)}
-          className="border rounded px-3 py-2"
-        >
+          className="border rounded px-3 py-2 flex-1 min-w-40" />
+        <select value={kategori} onChange={(e) => setKategori(e.target.value)}
+          className="border rounded px-3 py-2">
           <option value="">Semua Kategori</option>
           <option value="fasilitas">Fasilitas</option>
           <option value="akademik">Akademik</option>
           <option value="bullying">Bullying</option>
           <option value="lainnya">Lainnya</option>
         </select>
-        <button
-          onClick={fetchData}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Cari
-        </button>
+        <button onClick={fetchData} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Cari</button>
       </div>
 
       {loading && <p>Memuat data...</p>}
@@ -98,24 +90,18 @@ export default function ListPengaduan() {
             </tr>
           </thead>
           <tbody>
-            {data.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-4 text-center text-gray-400">
-                  Belum ada pengaduan
-                </td>
-              </tr>
+            {paginated.length === 0 && (
+              <tr><td colSpan={5} className="px-4 py-4 text-center text-gray-400">Belum ada pengaduan</td></tr>
             )}
-            {data.map((item) => (
+            {paginated.map((item) => (
               <tr key={item._id} className="border-t">
                 <td className="px-4 py-2">{item.judul}</td>
                 <td className="px-4 py-2 capitalize">{item.kategori}</td>
                 <td className="px-4 py-2">
                   {user?.role === "admin" ? (
-                    <select
-                      value={item.status}
+                    <select value={item.status}
                       onChange={(e) => handleStatusChange(item._id, e.target.value)}
-                      className={`px-2 py-1 rounded text-xs font-medium border-0 ${statusColor[item.status]}`}
-                    >
+                      className={`px-2 py-1 rounded text-xs font-medium border-0 ${statusColor[item.status]}`}>
                       <option value="pending">pending</option>
                       <option value="diproses">diproses</option>
                       <option value="selesai">selesai</option>
@@ -126,31 +112,17 @@ export default function ListPengaduan() {
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-2">
-                  {new Date(item.createdAt).toLocaleDateString("id-ID")}
-                </td>
-               <td className="px-4 py-2 flex gap-2">
-                  <button
-                    onClick={() => navigate(`/pengaduan/${item._id}`)}
-                    className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600"
-                  >
-                    Detail
-                  </button>
+                <td className="px-4 py-2">{new Date(item.createdAt).toLocaleDateString("id-ID")}</td>
+                <td className="px-4 py-2 flex gap-2">
+                  <button onClick={() => navigate(`/pengaduan/${item._id}`)}
+                    className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600">Detail</button>
                   {(user?.role === "siswa" && item.status === "pending") && (
-                    <button
-                      onClick={() => navigate(`/pengaduan/edit/${item._id}`)}
-                      className="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600"
-                    >
-                      Edit
-                    </button>
+                    <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)}
+                      className="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">Edit</button>
                   )}
                   {(user?.role === "admin" || (user?.role === "siswa" && item.status === "pending")) && (
-                    <button
-                      onClick={() => handleDelete(item._id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
-                    >
-                      Hapus
-                    </button>
+                    <button onClick={() => handleDelete(item._id)}
+                      className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">Hapus</button>
                   )}
                 </td>
               </tr>
@@ -158,6 +130,21 @@ export default function ListPengaduan() {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-4">
+          <button onClick={() => setPage((p) => Math.max(p - 1, 1))} disabled={page === 1}
+            className="px-3 py-1 rounded border disabled:opacity-50 hover:bg-gray-100">←</button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button key={i} onClick={() => setPage(i + 1)}
+              className={`px-3 py-1 rounded border ${page === i + 1 ? "bg-blue-600 text-white" : "hover:bg-gray-100"}`}>
+              {i + 1}
+            </button>
+          ))}
+          <button onClick={() => setPage((p) => Math.min(p + 1, totalPages))} disabled={page === totalPages}
+            className="px-3 py-1 rounded border disabled:opacity-50 hover:bg-gray-100">→</button>
+        </div>
+      )}
     </div>
   );
 }
