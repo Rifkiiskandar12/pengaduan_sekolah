@@ -15,9 +15,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+        
         <Route element={<PrivateRoute />}>
-        <Route path="/pengaduan/edit/:id" element={<EditPengaduan />} />
+          <Route path="/pengaduan/edit/:id" element={<EditPengaduan />} />
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/pengaduan" element={<ListPengaduan />} />

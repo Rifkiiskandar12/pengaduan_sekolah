@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePengaduan } from "../hooks/usePengaduan";
 import { useAuth } from "../hooks/useAuth";
+import Toast from "../components/Toast";
+import { useToast } from "../hooks/useToast";
 
 const statusColor = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -17,6 +19,7 @@ export default function ListPengaduan() {
   const { getUser } = useAuth();
   const user = getUser();
   const navigate = useNavigate();
+  const { toast, showToast, hideToast } = useToast();
 
   const fetchData = async () => {
     const params = {};
@@ -29,13 +32,19 @@ export default function ListPengaduan() {
   const handleStatusChange = async (id, status) => {
     await update(id, { status });
     fetchData();
+    showToast("Status berhasil diubah!");
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Yakin hapus pengaduan ini?")) return;
+  if (!confirm("Yakin hapus pengaduan ini?")) return;
+  try {
     await remove(id);
     fetchData();
-  };
+    showToast("Pengaduan berhasil dihapus!", "success");
+  } catch (err) {
+    showToast("Gagal hapus pengaduan", "error");
+  }
+};
 
   useEffect(() => {
     fetchData();
@@ -43,7 +52,8 @@ export default function ListPengaduan() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Daftar Pengaduan</h1>
+    {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
+    <h1 className="text-2xl font-bold mb-4">Daftar Pengaduan</h1>
 
       <div className="flex flex-wrap gap-2 mb-4">
         <input
