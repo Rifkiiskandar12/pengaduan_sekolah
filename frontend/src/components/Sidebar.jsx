@@ -17,8 +17,8 @@ export default function Sidebar({ open, onClose }) {
       >
         <nav className="flex flex-col gap-2" onClick={onClose}>
           <NavLink to="/dashboard" className={linkClass}>Dashboard</NavLink>
-          <NavLink to="/pengaduan" className={linkClass}>Daftar Pengaduan</NavLink>
-          <NavLink to="/pengaduan/tambah" className={linkClass}>Buat Pengaduan</NavLink>
+          <NavLink to="/pengaduan" className={linkClass} end>Daftar Pengaduan</NavLink>
+          <NavLink to="/pengaduan/tambah" className={linkClass} end>Buat Pengaduan</NavLink>
         </nav>
       </aside>
     </>
