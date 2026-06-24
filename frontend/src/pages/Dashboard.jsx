@@ -73,7 +73,7 @@ export default function Dashboard() {
         <>
           {/* Grafik */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="bg-white p-4 rounded-lg shadow">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
               <h2 className="font-semibold mb-4">Grafik Per Kategori</h2>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={kategoriData}>
@@ -85,25 +85,26 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white p-4 rounded-lg shadow">
+            <div className="bg-white p-4 rounded-lg shadow" style={{ backgroundColor: "inherit" }}>
               <h2 className="font-semibold mb-4">Grafik Status</h2>
               <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                <PieChart style={{ background: "transparent" }}>
+                  <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}
+                    label={{ fill: "currentColor" }}>
                     {statusData.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
                   </Pie>
                   <Tooltip />
-                  <Legend />
+                  <Legend wrapperStyle={{ color: "inherit" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* Tabel Terbaru */}
-          <div className="bg-white rounded-lg shadow overflow-x-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
             <div className="p-4 border-b font-semibold">5 Pengaduan Terbaru</div>
             <table className="w-full text-sm text-left">
-              <thead className="bg-gray-100">
+              <thead className="bg-gray-100 dark:bg-gray-700">
                 <tr>
                   <th className="px-4 py-2">Judul</th>
                   <th className="px-4 py-2">Kategori</th>

@@ -16,7 +16,7 @@ export default function MainLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-white">
       <Navbar user={user} onLogout={handleLogout} onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       <div className="flex relative">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
