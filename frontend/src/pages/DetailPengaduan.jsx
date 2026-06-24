@@ -26,18 +26,16 @@ export default function DetailPengaduan() {
 
   return (
     <div className="max-w-2xl">
-      <button
-        onClick={() => navigate("/pengaduan")}
-        className="mb-4 text-blue-600 hover:underline text-sm"
-      >
+      <button onClick={() => navigate("/pengaduan")}
+        className="mb-4 text-blue-600 hover:underline text-sm">
         ← Kembali
       </button>
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold mb-4">{data.judul}</h1>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h1 className="text-2xl font-bold mb-4 dark:text-white">{data.judul}</h1>
 
         <div className="flex gap-3 mb-4">
-          <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded text-sm capitalize">
+          <span className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded text-sm capitalize">
             {data.kategori}
           </span>
           <span className={`px-3 py-1 rounded text-sm font-medium ${statusColor[data.status]}`}>
@@ -45,14 +43,25 @@ export default function DetailPengaduan() {
           </span>
         </div>
 
-        <p className="text-gray-700 mb-6 leading-relaxed">{data.isi}</p>
+        <p className="text-gray-700 mb-6 leading-relaxed dark:text-gray-200">{data.isi}</p>
 
-        <div className="border-t pt-4 text-sm text-gray-500 flex flex-col gap-1">
-          <p>Pelapor: <span className="font-medium text-gray-700">{data.pelapor?.name}</span></p>
-          <p>Email: <span className="font-medium text-gray-700">{data.pelapor?.email}</span></p>
-          <p>Tanggal: <span className="font-medium text-gray-700">{new Date(data.createdAt).toLocaleDateString("id-ID")}</span></p>
+        <div className="border-t pt-4 text-sm text-gray-500 dark:text-gray-400 flex flex-col gap-1">
+          <span>Pelapor: <span className="font-medium text-gray-700 dark:text-gray-200">{data.pelapor?.name}</span></span>
+          <span>Email: <span className="font-medium text-gray-700 dark:text-gray-200">{data.pelapor?.email}</span></span>
+          <span>Tanggal: <span className="font-medium text-gray-700 dark:text-gray-200">{new Date(data.createdAt).toLocaleDateString("id-ID")}</span></span>
         </div>
+
+        {data.gambar && (
+          <div className="mt-4">
+            <span className="text-sm text-gray-500 dark:text-gray-400 block mb-2">Lampiran:</span>
+            <img
+              src={`http://localhost:5000/uploads/${data.gambar}`}
+              alt="Lampiran"
+              className="rounded-lg max-w-full max-h-64 object-contain border"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
-} 
+}
