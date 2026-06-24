@@ -4,6 +4,7 @@ import { usePengaduan } from "../hooks/usePengaduan";
 import { useAuth } from "../hooks/useAuth";
 import Toast from "../components/Toast";
 import { useToast } from "../hooks/useToast";
+import { exportPDF, exportExcel } from "../utils/exportHelper";
 
 const statusColor = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -63,9 +64,9 @@ export default function ListPengaduan() {
         <input type="text" placeholder="Cari judul..." value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && fetchData()}
-          className="border rounded px-3 py-2 flex-1 min-w-40" />
+          className="border rounded px-3 py-2 flex-1 min-w-40 dark:bg-gray-700 dark:text-white dark:border-gray-600" />
         <select value={kategori} onChange={(e) => setKategori(e.target.value)}
-          className="border rounded px-3 py-2">
+          className="border rounded px-3 py-2 dark:bg-gray-700 dark:text-white dark:border-gray-600">
           <option value="">Semua Kategori</option>
           <option value="fasilitas">Fasilitas</option>
           <option value="akademik">Akademik</option>
@@ -73,14 +74,18 @@ export default function ListPengaduan() {
           <option value="lainnya">Lainnya</option>
         </select>
         <button onClick={fetchData} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Cari</button>
+        <button onClick={() => exportPDF(data)}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Export PDF</button>
+        <button onClick={() => exportExcel(data)}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Export Excel</button>
       </div>
 
       {loading && <p>Memuat data...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
         <table className="w-full text-sm text-left">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-100 dark:bg-gray-700">
             <tr>
               <th className="px-4 py-2">Judul</th>
               <th className="px-4 py-2">Kategori</th>
