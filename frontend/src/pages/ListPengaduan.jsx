@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { usePengaduan } from "../hooks/usePengaduan";
 import { useAuth } from "../hooks/useAuth";
 
@@ -11,19 +12,28 @@ const statusColor = {
 export default function ListPengaduan() {
   const [data, setData] = useState([]);
   const [kategori, setKategori] = useState("");
-  const { getAll, update, loading, error } = usePengaduan();
+  const [search, setSearch] = useState("");
+  const { getAll, update, remove, loading, error } = usePengaduan();
   const { getUser } = useAuth();
   const user = getUser();
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     const params = {};
     if (kategori) params.kategori = kategori;
+    if (search) params.search = search;
     const res = await getAll(params);
     setData(res);
   };
 
   const handleStatusChange = async (id, status) => {
     await update(id, { status });
+    fetchData();
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Yakin hapus pengaduan ini?")) return;
+    await remove(id);
     fetchData();
   };
 
@@ -35,17 +45,33 @@ export default function ListPengaduan() {
     <div>
       <h1 className="text-2xl font-bold mb-4">Daftar Pengaduan</h1>
 
-      <select
-        value={kategori}
-        onChange={(e) => setKategori(e.target.value)}
-        className="border rounded px-3 py-2 mb-4"
-      >
-        <option value="">Semua Kategori</option>
-        <option value="fasilitas">Fasilitas</option>
-        <option value="akademik">Akademik</option>
-        <option value="bullying">Bullying</option>
-        <option value="lainnya">Lainnya</option>
-      </select>
+      <div className="flex flex-wrap gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Cari judul..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && fetchData()}
+          className="border rounded px-3 py-2 flex-1 min-w-40"
+        />
+        <select
+          value={kategori}
+          onChange={(e) => setKategori(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="">Semua Kategori</option>
+          <option value="fasilitas">Fasilitas</option>
+          <option value="akademik">Akademik</option>
+          <option value="bullying">Bullying</option>
+          <option value="lainnya">Lainnya</option>
+        </select>
+        <button
+          onClick={fetchData}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Cari
+        </button>
+      </div>
 
       {loading && <p>Memuat data...</p>}
       {error && <p className="text-red-600">{error}</p>}
@@ -58,12 +84,13 @@ export default function ListPengaduan() {
               <th className="px-4 py-2">Kategori</th>
               <th className="px-4 py-2">Status</th>
               <th className="px-4 py-2">Tanggal</th>
+              <th className="px-4 py-2">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {data.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-4 text-center text-gray-400">
+                <td colSpan={5} className="px-4 py-4 text-center text-gray-400">
                   Belum ada pengaduan
                 </td>
               </tr>
@@ -91,6 +118,22 @@ export default function ListPengaduan() {
                 </td>
                 <td className="px-4 py-2">
                   {new Date(item.createdAt).toLocaleDateString("id-ID")}
+                </td>
+                <td className="px-4 py-2 flex gap-2">
+                  <button
+                    onClick={() => navigate(`/pengaduan/${item._id}`)}
+                    className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600"
+                  >
+                    Detail
+                  </button>
+                  {user?.role === "admin" && (
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
+                    >
+                      Hapus
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

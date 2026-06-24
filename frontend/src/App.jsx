@@ -5,6 +5,7 @@ import FormPengaduan from "./pages/FormPengaduan";
 import ListPengaduan from "./pages/ListPengaduan";
 import MainLayout from "./layouts/MainLayout";
 import Register from "./pages/Register";
+import DetailPengaduan from "./pages/DetailPengaduan";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route element={<MainLayout />}>
+          <Route path="/pengaduan/:id" element={<DetailPengaduan />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pengaduan" element={<ListPengaduan />} />
           <Route path="/pengaduan/tambah" element={<FormPengaduan />} />
