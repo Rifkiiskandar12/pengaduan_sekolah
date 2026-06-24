@@ -33,7 +33,8 @@ exports.getOne = async (req, res, next) => {
 exports.create = async (req, res, next) => {
   try {
     const { judul, isi, kategori } = req.body;
-    const data = await Pengaduan.create({ judul, isi, kategori, pelapor: req.user.id });
+    const gambar = req.file ? req.file.filename : null;
+    const data = await Pengaduan.create({ judul, isi, kategori, pelapor: req.user.id, gambar });
     res.status(201).json(data);
   } catch (err) { next(err); }
 };

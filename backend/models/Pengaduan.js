@@ -24,6 +24,10 @@ const pengaduanSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  gambar: {
+    type: String,
+    default: null
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Pengaduan", pengaduanSchema);

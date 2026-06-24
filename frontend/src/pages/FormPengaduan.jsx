@@ -1,26 +1,39 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePengaduan } from "../hooks/usePengaduan";
-import Toast from "../components/Toast";
 import { useToast } from "../hooks/useToast";
+import Toast from "../components/Toast";
+import api from "../services/api";
 
 export default function FormPengaduan() {
   const [judul, setJudul] = useState("");
   const [isi, setIsi] = useState("");
   const [kategori, setKategori] = useState("fasilitas");
-  const { create, loading, error } = usePengaduan();
+  const [gambar, setGambar] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!judul.trim() || !isi.trim()) return;
+    setLoading(true);
     try {
-      await create({ judul, isi, kategori });
+      const formData = new FormData();
+      formData.append("judul", judul);
+      formData.append("isi", isi);
+      formData.append("kategori", kategori);
+      if (gambar) formData.append("gambar", gambar);
+
+      await api.post("/pengaduan", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
       showToast("Pengaduan berhasil dikirim!");
       setTimeout(() => navigate("/pengaduan"), 1000);
     } catch {
-      // error sudah ditangani di hook
+      setError("Gagal mengirim pengaduan");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,9 +63,17 @@ export default function FormPengaduan() {
           </select>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <label className={labelClass}>Isi Pengaduan</label>
           <textarea value={isi} onChange={(e) => setIsi(e.target.value)} required rows={4} className={inputClass} />
+        </div>
+
+        <div className="mb-6">
+          <label className={labelClass}>Lampiran Gambar (opsional)</label>
+          <input type="file" accept="image/*"
+            onChange={(e) => setGambar(e.target.files[0])}
+            className="w-full text-sm dark:text-gray-200" />
+          <p className="text-xs text-gray-500 mt-1">Max 2MB, format JPG/PNG</p>
         </div>
 
         <button type="submit" disabled={loading}
