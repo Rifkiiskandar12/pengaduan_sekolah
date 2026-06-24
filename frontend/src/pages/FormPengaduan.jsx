@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePengaduan } from "../hooks/usePengaduan";
+import Toast from "../components/Toast";
+import { useToast } from "../hooks/useToast";
 
 export default function FormPengaduan() {
   const [judul, setJudul] = useState("");
@@ -8,13 +10,15 @@ export default function FormPengaduan() {
   const [kategori, setKategori] = useState("fasilitas");
   const { create, loading, error } = usePengaduan();
   const navigate = useNavigate();
+  const { toast, showToast, hideToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!judul.trim() || !isi.trim()) return;
     try {
       await create({ judul, isi, kategori });
-      navigate("/pengaduan");
+      showToast("Pengaduan berhasil dikirim!");
+      setTimeout(() => navigate("/pengaduan"), 1000);
     } catch {
       // error sudah ditangani di hook
     }
@@ -22,6 +26,7 @@ export default function FormPengaduan() {
 
   return (
     <div>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
       <h1 className="text-2xl font-bold mb-4">Buat Pengaduan</h1>
 
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow max-w-lg">
