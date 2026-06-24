@@ -55,4 +55,4 @@ export default function DetailPengaduan() {
       </div>
     </div>
   );
-}
+} 
