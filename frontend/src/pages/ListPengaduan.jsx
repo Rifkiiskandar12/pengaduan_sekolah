@@ -103,7 +103,7 @@ export default function ListPengaduan() {
                 <td className="px-4 py-2">{item.judul}</td>
                 <td className="px-4 py-2 capitalize">{item.kategori}</td>
                 <td className="px-4 py-2">
-                  {user?.role === "admin" ? (
+                  {user?.role === "admin" || user?.role === "guru" ? (
                     <select value={item.status}
                       onChange={(e) => handleStatusChange(item._id, e.target.value)}
                       className={`px-2 py-1 rounded text-xs font-medium border-0 ${statusColor[item.status]}`}>

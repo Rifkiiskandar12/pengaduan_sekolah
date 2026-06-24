@@ -16,7 +16,7 @@ export default function Dashboard() {
   const { getStats, getAll, loading } = usePengaduan();
   const { getUser } = useAuth();
   const user = getUser();
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === "admin" || user?.role === "guru";
 
   useEffect(() => {
     if (isAdmin) {

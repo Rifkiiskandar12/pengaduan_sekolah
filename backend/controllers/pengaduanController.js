@@ -3,7 +3,7 @@ const Pengaduan = require("../models/Pengaduan");
 // GET /api/pengaduan
 exports.getAll = async (req, res, next) => {
   try {
-    const filter = req.user.role === "admin" ? {} : { pelapor: req.user.id };
+    const filter = (req.user.role === "admin" || req.user.role === "guru") ? {} : { pelapor: req.user.id };
     const { kategori, status, search } = req.query;
     if (kategori) filter.kategori = kategori;
     if (status) filter.status = status;
@@ -21,7 +21,7 @@ exports.getOne = async (req, res, next) => {
     if (!data) return res.status(404).json({ message: "Tidak ditemukan" });
 
     // Cek otorisasi: siswa hanya bisa melihat pengaduan miliknya sendiri
-    if (req.user.role !== "admin" && data.pelapor._id.toString() !== req.user.id) {
+    if (req.user.role !== "admin" && req.user.role !== "guru" && data.pelapor._id.toString() !== req.user.id) {
       return res.status(403).json({ message: "Akses ditolak" });
     }
 
