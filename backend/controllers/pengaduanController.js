@@ -46,7 +46,7 @@ exports.update = async (req, res, next) => {
     if (!data) return res.status(404).json({ message: "Tidak ditemukan" });
 
     if (req.user.role === "admin" || req.user.role === "guru") {
-      // Admin hanya diperbolehkan mengupdate status pengaduan
+      // Admin dan guru hanya diperbolehkan mengupdate status pengaduan
       if (req.body.status !== undefined) {
         data.status = req.body.status;
       }
