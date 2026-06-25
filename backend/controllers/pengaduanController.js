@@ -45,7 +45,7 @@ exports.update = async (req, res, next) => {
     const data = await Pengaduan.findById(req.params.id);
     if (!data) return res.status(404).json({ message: "Tidak ditemukan" });
 
-    if (req.user.role === "admin") {
+    if (req.user.role === "admin" || req.user.role === "guru") {
       // Admin hanya diperbolehkan mengupdate status pengaduan
       if (req.body.status !== undefined) {
         data.status = req.body.status;
