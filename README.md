@@ -93,3 +93,4 @@ npm run dev
 | --------- | ----------------------------------------------------------- |
 | **Siswa** | Buat, lihat, edit, hapus pengaduan sendiri (status pending) |
 | **Admin** | Kelola semua pengaduan, ubah status, lihat dashboard global |
+| **Guru**  | Kelola semua pengaduan, ubah status, lihat dashboard global |
