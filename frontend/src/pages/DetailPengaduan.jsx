@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 
 const statusColor = {
-  pending: "bg-yellow-100 text-yellow-700",
-  diproses: "bg-blue-100 text-blue-700",
-  selesai: "bg-green-100 text-green-700",
+  pending: "badge-pending",
+  diproses: "badge-diproses",
+  selesai: "badge-selesai",
 };
 
 export default function DetailPengaduan() {
@@ -21,43 +21,47 @@ export default function DetailPengaduan() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <p>Memuat...</p>;
-  if (!data) return <p>Data tidak ditemukan.</p>;
+  if (loading) return <p className="page-subtitle">Memuat...</p>;
+  if (!data) return <p className="page-subtitle">Data tidak ditemukan.</p>;
 
   return (
-    <div className="max-w-2xl">
-      <button onClick={() => navigate("/pengaduan")}
-        className="mb-4 text-blue-600 hover:underline text-sm">
-        ← Kembali
+    <div className="page-wrap max-w-3xl">
+      <button onClick={() => navigate("/pengaduan")} className="btn btn-secondary mb-4">
+        Kembali
       </button>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold mb-4 dark:text-white">{data.judul}</h1>
+      <div className="panel p-6">
+        <h1 className="page-title mb-4">{data.judul}</h1>
 
-        <div className="flex gap-3 mb-4">
-          <span className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 px-3 py-1 rounded text-sm capitalize">
-            {data.kategori}
-          </span>
-          <span className={`px-3 py-1 rounded text-sm font-medium ${statusColor[data.status]}`}>
-            {data.status}
-          </span>
+        <div className="flex flex-wrap gap-3 mb-4">
+          <span className="badge badge-neutral capitalize">{data.kategori}</span>
+          <span className={`badge ${statusColor[data.status]}`}>{data.status}</span>
         </div>
 
-        <p className="text-gray-700 mb-6 leading-relaxed dark:text-gray-200">{data.isi}</p>
+        <p className="text-[color:var(--color-ink-2)] mb-6 leading-relaxed">{data.isi}</p>
 
-        <div className="border-t pt-4 text-sm text-gray-500 dark:text-gray-400 flex flex-col gap-1">
-          <span>Pelapor: <span className="font-medium text-gray-700 dark:text-gray-200">{data.pelapor?.name}</span></span>
-          <span>Email: <span className="font-medium text-gray-700 dark:text-gray-200">{data.pelapor?.email}</span></span>
-          <span>Tanggal: <span className="font-medium text-gray-700 dark:text-gray-200">{new Date(data.createdAt).toLocaleDateString("id-ID")}</span></span>
+        <div className="detail-meta">
+          <div className="meta-item">
+            <span className="meta-label">Pelapor</span>
+            <span className="meta-value">{data.pelapor?.name}</span>
+          </div>
+          <div className="meta-item">
+            <span className="meta-label">Email</span>
+            <span className="meta-value">{data.pelapor?.email}</span>
+          </div>
+          <div className="meta-item">
+            <span className="meta-label">Tanggal</span>
+            <span className="meta-value">{new Date(data.createdAt).toLocaleDateString("id-ID")}</span>
+          </div>
         </div>
 
         {data.gambar && (
           <div className="mt-4">
-            <span className="text-sm text-gray-500 dark:text-gray-400 block mb-2">Lampiran:</span>
+            <span className="text-sm text-[color:var(--color-muted)] block mb-2">Lampiran:</span>
             <img
               src={`http://localhost:5000/uploads/${data.gambar}`}
               alt="Lampiran"
-              className="rounded-lg max-w-full max-h-64 object-contain border"
+              className="rounded-[var(--radius-card)] max-w-full max-h-64 object-contain border border-[color:var(--color-rule)]"
             />
           </div>
         )}
