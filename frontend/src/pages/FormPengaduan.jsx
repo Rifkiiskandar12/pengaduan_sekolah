@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../hooks/useToast";
 import Toast from "../components/Toast";
+import { useToast } from "../hooks/useToast";
 import api from "../services/api";
 
 export default function FormPengaduan() {
@@ -26,7 +26,7 @@ export default function FormPengaduan() {
       if (gambar) formData.append("gambar", gambar);
 
       await api.post("/pengaduan", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: { "Content-Type": "multipart/form-data" },
       });
       showToast("Pengaduan berhasil dikirim!");
       setTimeout(() => navigate("/pengaduan"), 1000);
@@ -37,25 +37,27 @@ export default function FormPengaduan() {
     }
   };
 
-  const inputClass = "w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600";
-  const labelClass = "block text-sm font-medium mb-1 dark:text-gray-200";
-
   return (
-    <div>
+    <div className="page-wrap">
       {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
-      <h1 className="text-2xl font-bold mb-4">Buat Pengaduan</h1>
+      <header className="page-head">
+        <div>
+          <h1 className="page-title">Buat Pengaduan</h1>
+          <p className="page-subtitle">Tulis laporan singkat, jelas, dan lengkapi lampiran bila perlu.</p>
+        </div>
+      </header>
 
-      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow max-w-lg">
-        {error && <p className="bg-red-100 text-red-600 text-sm p-2 rounded mb-4">{error}</p>}
+      <form onSubmit={handleSubmit} className="panel p-6 max-w-2xl form-grid">
+        {error && <p className="alert alert-error mb-4">{error}</p>}
 
-        <div className="mb-4">
-          <label className={labelClass}>Judul</label>
-          <input type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required className={inputClass} />
+        <div>
+          <label className="field-label">Judul</label>
+          <input type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required className="field" />
         </div>
 
-        <div className="mb-4">
-          <label className={labelClass}>Kategori</label>
-          <select value={kategori} onChange={(e) => setKategori(e.target.value)} className={inputClass}>
+        <div>
+          <label className="field-label">Kategori</label>
+          <select value={kategori} onChange={(e) => setKategori(e.target.value)} className="field">
             <option value="fasilitas">Fasilitas</option>
             <option value="akademik">Akademik</option>
             <option value="bullying">Bullying</option>
@@ -63,21 +65,18 @@ export default function FormPengaduan() {
           </select>
         </div>
 
-        <div className="mb-4">
-          <label className={labelClass}>Isi Pengaduan</label>
-          <textarea value={isi} onChange={(e) => setIsi(e.target.value)} required rows={4} className={inputClass} />
+        <div>
+          <label className="field-label">Isi Pengaduan</label>
+          <textarea value={isi} onChange={(e) => setIsi(e.target.value)} required rows={5} className="field" />
         </div>
 
-        <div className="mb-6">
-          <label className={labelClass}>Lampiran Gambar (opsional)</label>
-          <input type="file" accept="image/*"
-            onChange={(e) => setGambar(e.target.files[0])}
-            className="w-full text-sm dark:text-gray-200" />
-          <p className="text-xs text-gray-500 mt-1">Max 2MB, format JPG/PNG</p>
+        <div>
+          <label className="field-label">Lampiran Gambar (opsional)</label>
+          <input type="file" accept="image/*" onChange={(e) => setGambar(e.target.files[0])} className="field text-sm" />
+          <p className="text-xs text-[color:var(--color-muted)] mt-1">Max 2MB, format JPG/PNG</p>
         </div>
 
-        <button type="submit" disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50">
+        <button type="submit" disabled={loading} className="btn btn-primary">
           {loading ? "Mengirim..." : "Kirim Pengaduan"}
         </button>
       </form>
