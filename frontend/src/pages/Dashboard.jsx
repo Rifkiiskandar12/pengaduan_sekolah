@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { usePengaduan } from "../hooks/usePengaduan";
+import { Bar, BarChart, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAuth } from "../hooks/useAuth";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
+import { usePengaduan } from "../hooks/usePengaduan";
 
-const COLORS = ["#f59e0b", "#6366f1", "#10b981", "#ef4444"];
+const COLORS = ["var(--color-warning)", "var(--color-info)", "var(--color-success)"];
 const statusColor = {
-  pending: "bg-yellow-100 text-yellow-700",
-  diproses: "bg-blue-100 text-blue-700",
-  selesai: "bg-green-100 text-green-700",
+  pending: "badge-pending",
+  diproses: "badge-diproses",
+  selesai: "badge-selesai",
 };
 
 export default function Dashboard() {
@@ -35,10 +35,10 @@ export default function Dashboard() {
   }, []);
 
   const cards = [
-    { label: isAdmin ? "Total Pengaduan" : "Pengaduan Saya", value: stats?.total, color: "bg-blue-500" },
-    { label: "Pending", value: stats?.pending, color: "bg-yellow-500" },
-    { label: "Diproses", value: stats?.diproses, color: "bg-indigo-500" },
-    { label: "Selesai", value: stats?.selesai, color: "bg-green-500" },
+    { label: isAdmin ? "Total Pengaduan" : "Pengaduan Saya", value: stats?.total },
+    { label: "Pending", value: stats?.pending },
+    { label: "Diproses", value: stats?.diproses },
+    { label: "Selesai", value: stats?.selesai },
   ];
 
   const statusData = [
@@ -48,81 +48,83 @@ export default function Dashboard() {
   ];
 
   const kategoriData = [
-    { name: "Fasilitas", value: recent.filter(d => d.kategori === "fasilitas").length },
-    { name: "Akademik", value: recent.filter(d => d.kategori === "akademik").length },
-    { name: "Bullying", value: recent.filter(d => d.kategori === "bullying").length },
-    { name: "Lainnya", value: recent.filter(d => d.kategori === "lainnya").length },
+    { name: "Fasilitas", value: recent.filter((d) => d.kategori === "fasilitas").length },
+    { name: "Akademik", value: recent.filter((d) => d.kategori === "akademik").length },
+    { name: "Bullying", value: recent.filter((d) => d.kategori === "bullying").length },
+    { name: "Lainnya", value: recent.filter((d) => d.kategori === "lainnya").length },
   ];
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-      {loading && <p>Memuat...</p>}
+    <div className="page-wrap">
+      <header className="page-head">
+        <div>
+          <h1 className="page-title">Dashboard</h1>
+          <p className="page-subtitle">Ringkasan status pengaduan dan aktivitas terbaru.</p>
+        </div>
+      </header>
 
-      {/* Cards */}
+      {loading && <p className="page-subtitle">Memuat...</p>}
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {cards.map((card) => (
-          <div key={card.label} className={`${card.color} text-white rounded-lg p-5 shadow`}>
-            <p className="text-sm opacity-90">{card.label}</p>
-            <p className="text-3xl font-bold mt-2">{card.value ?? "-"}</p>
+          <div key={card.label} className="metric-card">
+            <p className="metric-label">{card.label}</p>
+            <p className="metric-value">{card.value ?? "-"}</p>
           </div>
         ))}
       </div>
 
       {isAdmin && (
         <>
-          {/* Grafik */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <h2 className="font-semibold mb-4">Grafik Per Kategori</h2>
-              <ResponsiveContainer width="100%" height={200}>
+            <div className="panel p-4">
+              <h2 className="section-title mb-4">Grafik Per Kategori</h2>
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={kategoriData}>
                   <XAxis dataKey="name" />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Bar dataKey="value" fill="#6366f1" />
+                  <Bar dataKey="value" fill="var(--color-accent)" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white p-4 rounded-lg shadow" style={{ backgroundColor: "inherit" }}>
-              <h2 className="font-semibold mb-4">Grafik Status</h2>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart style={{ background: "transparent" }}>
-                  <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}
-                    label={{ fill: "currentColor" }}>
+            <div className="panel p-4">
+              <h2 className="section-title mb-4">Grafik Status</h2>
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}>
                     {statusData.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
                   </Pie>
                   <Tooltip />
-                  <Legend wrapperStyle={{ color: "inherit" }} />
+                  <Legend wrapperStyle={{ color: "var(--color-ink)" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Tabel Terbaru */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
-            <div className="p-4 border-b font-semibold">5 Pengaduan Terbaru</div>
-            <table className="w-full text-sm text-left">
-              <thead className="bg-gray-100 dark:bg-gray-700">
+          <div className="panel table-wrap">
+            <div className="panel-header">
+              <h2 className="section-title">5 Pengaduan Terbaru</h2>
+            </div>
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="px-4 py-2">Judul</th>
-                  <th className="px-4 py-2">Kategori</th>
-                  <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Pelapor</th>
+                  <th>Judul</th>
+                  <th>Kategori</th>
+                  <th>Status</th>
+                  <th>Pelapor</th>
                 </tr>
               </thead>
               <tbody>
                 {recent.map((item) => (
-                  <tr key={item._id} className="border-t">
-                    <td className="px-4 py-2">{item.judul}</td>
-                    <td className="px-4 py-2 capitalize">{item.kategori}</td>
-                    <td className="px-4 py-2">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${statusColor[item.status]}`}>
-                        {item.status}
-                      </span>
+                  <tr key={item._id}>
+                    <td>{item.judul}</td>
+                    <td className="capitalize">{item.kategori}</td>
+                    <td>
+                      <span className={`badge ${statusColor[item.status]}`}>{item.status}</span>
                     </td>
-                    <td className="px-4 py-2">{item.pelapor?.name}</td>
+                    <td>{item.pelapor?.name}</td>
                   </tr>
                 ))}
               </tbody>

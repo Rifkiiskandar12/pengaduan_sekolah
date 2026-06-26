@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,60 +14,68 @@ export default function Login() {
       await login(email, password);
       navigate("/dashboard");
     } catch {
-      // error sudah ditangani di hook
+      // Error is handled by the auth hook.
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm"
-      >
-        <h1 className="text-2xl font-bold mb-6 text-center text-blue-600">
-          Login Pengaduan Sekolah
-        </h1>
-
-        {error && (
-          <p className="bg-red-100 text-red-600 text-sm p-2 rounded mb-4">
-            {error}
+    <div className="auth-screen">
+      <section className="auth-context">
+        <div>
+          <span className="brand-mark mb-6">PS</span>
+          <h1 className="page-title text-[color:var(--color-accent-ink)]">
+            Pengaduan sekolah yang tertata.
+          </h1>
+          <p className="auth-context-text mt-4 max-w-xl">
+            Masuk untuk mencatat laporan, memantau status, dan membantu sekolah merespons masalah dengan jelas.
           </p>
-        )}
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
         </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-1">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading ? "Memproses..." : "Login"}
-        </button>
-
-        <p className="text-sm text-center mt-4">
-          Belum punya akun? <Link to="/register" className="text-blue-600">Daftar</Link>
+        <p className="auth-context-text text-sm">
+          Akses untuk siswa, guru, dan admin.
         </p>
-      </form>
+      </section>
+
+      <div className="auth-form-wrap">
+        <form onSubmit={handleSubmit} className="auth-card panel p-8">
+          <h1 className="section-title mb-2">Login</h1>
+          <p className="page-subtitle mb-6">Masukkan email dan password akun.</p>
+
+          {error && <p className="alert alert-error mb-4">{error}</p>}
+
+          <div className="mb-4">
+            <label className="field-label">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="field"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="field-label">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="field"
+            />
+          </div>
+
+          <button type="submit" disabled={loading} className="btn btn-primary w-full">
+            {loading ? "Memproses..." : "Login"}
+          </button>
+
+          <p className="text-sm text-center mt-4 text-[color:var(--color-ink-2)]">
+            Belum punya akun?{" "}
+            <Link to="/register" className="font-semibold text-[color:var(--color-accent)]">
+              Daftar
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

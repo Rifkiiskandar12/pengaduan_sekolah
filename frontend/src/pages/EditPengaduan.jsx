@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { useNavigate, useParams } from "react-router-dom";
 import { usePengaduan } from "../hooks/usePengaduan";
+import api from "../services/api";
 
 export default function EditPengaduan() {
   const { id } = useParams();
@@ -19,7 +19,7 @@ export default function EditPengaduan() {
       }
       setForm({ judul, isi, kategori });
     }).catch(() => navigate("/pengaduan"));
-  }, [id]);
+  }, [id, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,34 +27,40 @@ export default function EditPengaduan() {
     try {
       await update(id, form);
       navigate("/pengaduan");
-    } catch (err) {
+    } catch {
       setError("Gagal mengupdate pengaduan");
     }
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Edit Pengaduan</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow max-w-lg">
-        {error && <p className="bg-red-100 text-red-600 text-sm p-2 rounded mb-4">{error}</p>}
+    <div className="page-wrap">
+      <header className="page-head">
+        <div>
+          <h1 className="page-title">Edit Pengaduan</h1>
+          <p className="page-subtitle">Perbaiki isi laporan selama statusnya masih pending.</p>
+        </div>
+      </header>
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Judul</label>
+      <form onSubmit={handleSubmit} className="panel p-6 max-w-2xl form-grid">
+        {error && <p className="alert alert-error mb-4">{error}</p>}
+
+        <div>
+          <label className="field-label">Judul</label>
           <input
             type="text"
             value={form.judul}
             onChange={(e) => setForm({ ...form, judul: e.target.value })}
             required
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="field"
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Kategori</label>
+        <div>
+          <label className="field-label">Kategori</label>
           <select
             value={form.kategori}
             onChange={(e) => setForm({ ...form, kategori: e.target.value })}
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="field"
           >
             <option value="fasilitas">Fasilitas</option>
             <option value="akademik">Akademik</option>
@@ -63,24 +69,22 @@ export default function EditPengaduan() {
           </select>
         </div>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-1">Isi Pengaduan</label>
+        <div>
+          <label className="field-label">Isi Pengaduan</label>
           <textarea
             value={form.isi}
             onChange={(e) => setForm({ ...form, isi: e.target.value })}
             required
-            rows={4}
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={5}
+            className="field"
           />
         </div>
 
-        <div className="flex gap-2">
-          <button type="submit" disabled={loading}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50">
+        <div className="flex flex-wrap gap-2">
+          <button type="submit" disabled={loading} className="btn btn-primary">
             {loading ? "Menyimpan..." : "Simpan"}
           </button>
-          <button type="button" onClick={() => navigate("/pengaduan")}
-            className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
+          <button type="button" onClick={() => navigate("/pengaduan")} className="btn btn-secondary">
             Batal
           </button>
         </div>
