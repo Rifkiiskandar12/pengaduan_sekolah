@@ -15,6 +15,13 @@ export default function Sidebar({ open, onClose }) {
       )}
       <aside className={`sidebar-panel fixed md:static top-0 left-0 h-screen w-56 p-4 z-30 transform transition-transform
         ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
+        <div className="sidebar-brand">
+          <span className="brand-mark">PS</span>
+          <div>
+            <p className="sidebar-title">Pengaduan</p>
+            <span className="sidebar-subtitle">{user?.role || "user"}</span>
+          </div>
+        </div>
         <nav className="flex flex-col gap-2" onClick={onClose}>
           {(user?.role === "admin" || user?.role === "guru") && (
             <NavLink to="/dashboard" className={linkClass}>Dashboard</NavLink>
