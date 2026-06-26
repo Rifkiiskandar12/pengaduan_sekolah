@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 
-const colors = {
-  success: "bg-green-500",
-  error: "bg-red-500",
-  warning: "bg-yellow-500",
+const toneClass = {
+  success: "toast-success",
+  error: "toast-error",
+  warning: "toast-warning",
 };
 
 export default function Toast({ message, type = "success", onClose }) {
@@ -13,7 +13,7 @@ export default function Toast({ message, type = "success", onClose }) {
   }, []);
 
   return (
-    <div className={`fixed top-4 right-4 z-50 ${colors[type]} text-white px-4 py-3 rounded shadow-lg text-sm`}>
+    <div className={`toast ${toneClass[type] || toneClass.success}`} role="status">
       {message}
     </div>
   );
