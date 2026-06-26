@@ -1,0 +1,8 @@
+{
+  "date": "2026-06-26",
+  "fontStack": "system sans via Tailwind/Vite project",
+  "palette": "new OKLCH tokens in frontend/tokens.css",
+  "motion": "motion-cut; transform and opacity only",
+  "spacing": "4-point named token scale",
+  "framework": "Vite React with Tailwind CSS"
+}
