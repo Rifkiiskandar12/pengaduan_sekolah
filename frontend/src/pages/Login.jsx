@@ -26,18 +26,19 @@ export default function Login() {
           <h1 className="page-title text-[color:var(--color-accent-ink)]">
             Pengaduan sekolah yang tertata.
           </h1>
-          <p className="mt-4 max-w-xl text-[color:oklch(86%_0.025_120)]">
+          <p className="auth-context-text mt-4 max-w-xl">
             Masuk untuk mencatat laporan, memantau status, dan membantu sekolah merespons masalah dengan jelas.
           </p>
         </div>
-        <p className="text-sm text-[color:oklch(78%_0.025_120)]">
+        <p className="auth-context-text text-sm">
           Akses untuk siswa, guru, dan admin.
         </p>
       </section>
 
       <div className="auth-form-wrap">
         <form onSubmit={handleSubmit} className="auth-card panel p-8">
-          <h1 className="text-2xl font-bold mb-6">Login</h1>
+          <h1 className="section-title mb-2">Login</h1>
+          <p className="page-subtitle mb-6">Masukkan email dan password akun.</p>
 
           {error && <p className="alert alert-error mb-4">{error}</p>}
 
