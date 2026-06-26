@@ -34,7 +34,7 @@ export default function Register() {
           <h1 className="page-title text-[color:var(--color-accent-ink)]">
             Mulai dari satu laporan.
           </h1>
-          <p className="mt-4 max-w-xl text-[color:oklch(86%_0.025_120)]">
+          <p className="auth-context-text mt-4 max-w-xl">
             Buat akun untuk mengirim pengaduan dan mengikuti proses tindak lanjutnya.
           </p>
         </div>
@@ -42,7 +42,8 @@ export default function Register() {
 
       <div className="auth-form-wrap">
         <form onSubmit={handleSubmit} className="auth-card panel p-8">
-          <h1 className="text-2xl font-bold mb-6">Daftar Akun</h1>
+          <h1 className="section-title mb-2">Daftar Akun</h1>
+          <p className="page-subtitle mb-6">Isi data dasar untuk membuat akun baru.</p>
 
           {error && <p className="alert alert-error mb-4">{error}</p>}
 
