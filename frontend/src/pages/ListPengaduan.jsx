@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePengaduan } from "../hooks/usePengaduan";
-import { useAuth } from "../hooks/useAuth";
 import Toast from "../components/Toast";
+import { useAuth } from "../hooks/useAuth";
+import { usePengaduan } from "../hooks/usePengaduan";
 import { useToast } from "../hooks/useToast";
-import { exportPDF, exportExcel } from "../utils/exportHelper";
+import { exportExcel, exportPDF } from "../utils/exportHelper";
 
 const statusColor = {
-  pending: "bg-yellow-100 text-yellow-700",
-  diproses: "bg-blue-100 text-blue-700",
-  selesai: "bg-green-100 text-green-700",
+  pending: "badge-pending",
+  diproses: "badge-diproses",
+  selesai: "badge-selesai",
 };
 
 export default function ListPengaduan() {
@@ -50,85 +50,100 @@ export default function ListPengaduan() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [kategori]);
 
   const totalPages = Math.ceil(data.length / limitPerPage);
   const paginated = data.slice((page - 1) * limitPerPage, page * limitPerPage);
 
   return (
-    <div>
+    <div className="page-wrap">
       {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
-      <h1 className="text-2xl font-bold mb-4">Daftar Pengaduan</h1>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        <input type="text" placeholder="Cari judul..." value={search}
+      <header className="page-head">
+        <div>
+          <h1 className="page-title">Daftar Pengaduan</h1>
+          <p className="page-subtitle">Cari, filter, ekspor, dan tindak lanjuti laporan.</p>
+        </div>
+      </header>
+
+      <div className="filter-bar">
+        <input
+          type="text"
+          placeholder="Cari judul..."
+          value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && fetchData()}
-          className="border rounded px-3 py-2 flex-1 min-w-40 dark:bg-gray-700 dark:text-white dark:border-gray-600" />
-        <select value={kategori} onChange={(e) => setKategori(e.target.value)}
-          className="border rounded px-3 py-2 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+          className="field flex-1 min-w-40"
+        />
+        <select value={kategori} onChange={(e) => setKategori(e.target.value)} className="field md:w-auto">
           <option value="">Semua Kategori</option>
           <option value="fasilitas">Fasilitas</option>
           <option value="akademik">Akademik</option>
           <option value="bullying">Bullying</option>
           <option value="lainnya">Lainnya</option>
         </select>
-        <button onClick={fetchData} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Cari</button>
-        <button onClick={() => exportPDF(data)}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Export PDF</button>
-        <button onClick={() => exportExcel(data)}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Export Excel</button>
+        <button onClick={fetchData} className="btn btn-primary">Cari</button>
+        <button onClick={() => exportPDF(data)} className="btn btn-danger">PDF</button>
+        <button onClick={() => exportExcel(data)} className="btn btn-secondary">Excel</button>
       </div>
 
-      {loading && <p>Memuat data...</p>}
-      {error && <p className="text-red-600">{error}</p>}
+      {loading && <p className="page-subtitle">Memuat data...</p>}
+      {error && <p className="alert alert-error">{error}</p>}
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-100 dark:bg-gray-700">
+      <div className="panel table-wrap">
+        <table className="data-table">
+          <thead>
             <tr>
-              <th className="px-4 py-2">Judul</th>
-              <th className="px-4 py-2">Kategori</th>
-              <th className="px-4 py-2">Status</th>
-              <th className="px-4 py-2">Tanggal</th>
-              <th className="px-4 py-2">Aksi</th>
+              <th>Judul</th>
+              <th>Kategori</th>
+              <th>Status</th>
+              <th>Tanggal</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody>
             {paginated.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-4 text-center text-gray-400">Belum ada pengaduan</td></tr>
+              <tr>
+                <td colSpan={5} className="text-center text-[color:var(--color-muted)]">Belum ada pengaduan</td>
+              </tr>
             )}
             {paginated.map((item) => (
-              <tr key={item._id} className="border-t">
-                <td className="px-4 py-2">{item.judul}</td>
-                <td className="px-4 py-2 capitalize">{item.kategori}</td>
-                <td className="px-4 py-2">
+              <tr key={item._id}>
+                <td>{item.judul}</td>
+                <td className="capitalize">{item.kategori}</td>
+                <td>
                   {user?.role === "admin" || user?.role === "guru" ? (
-                    <select value={item.status}
+                    <select
+                      value={item.status}
                       onChange={(e) => handleStatusChange(item._id, e.target.value)}
-                      className={`px-2 py-1 rounded text-xs font-medium border-0 ${statusColor[item.status]}`}>
+                      className={`badge border-0 ${statusColor[item.status]}`}
+                    >
                       <option value="pending">pending</option>
                       <option value="diproses">diproses</option>
                       <option value="selesai">selesai</option>
                     </select>
                   ) : (
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${statusColor[item.status]}`}>
-                      {item.status}
-                    </span>
+                    <span className={`badge ${statusColor[item.status]}`}>{item.status}</span>
                   )}
                 </td>
-                <td className="px-4 py-2">{new Date(item.createdAt).toLocaleDateString("id-ID")}</td>
-                <td className="px-4 py-2 flex gap-2">
-                  <button onClick={() => navigate(`/pengaduan/${item._id}`)}
-                    className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600">Detail</button>
-                  {(user?.role === "siswa" && item.status === "pending") && (
-                    <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)}
-                      className="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">Edit</button>
+                <td>{new Date(item.createdAt).toLocaleDateString("id-ID")}</td>
+                <td>
+                  <div className="flex flex-wrap gap-2">
+                  <button onClick={() => navigate(`/pengaduan/${item._id}`)} className="btn btn-primary !min-h-0 !py-1 text-xs">
+                    Detail
+                  </button>
+                  {user?.role === "siswa" && item.status === "pending" && (
+                    <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)} className="btn btn-secondary !min-h-0 !py-1 text-xs">
+                      Edit
+                    </button>
                   )}
                   {(user?.role === "admin" || (user?.role === "siswa" && item.status === "pending")) && (
-                    <button onClick={() => handleDelete(item._id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">Hapus</button>
+                    <button onClick={() => handleDelete(item._id)} className="btn btn-danger !min-h-0 !py-1 text-xs">
+                      Hapus
+                    </button>
                   )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -137,17 +152,22 @@ export default function ListPengaduan() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
-          <button onClick={() => setPage((p) => Math.max(p - 1, 1))} disabled={page === 1}
-            className="px-3 py-1 rounded border disabled:opacity-50 hover:bg-gray-100">←</button>
+        <div className="flex flex-wrap justify-center gap-2 mt-4">
+          <button onClick={() => setPage((p) => Math.max(p - 1, 1))} disabled={page === 1} className="btn btn-secondary !min-h-0 !py-1">
+            Sebelumnya
+          </button>
           {Array.from({ length: totalPages }, (_, i) => (
-            <button key={i} onClick={() => setPage(i + 1)}
-              className={`px-3 py-1 rounded border ${page === i + 1 ? "bg-blue-600 text-white" : "hover:bg-gray-100"}`}>
+            <button
+              key={i}
+              onClick={() => setPage(i + 1)}
+              className={`btn !min-h-0 !py-1 ${page === i + 1 ? "btn-primary" : "btn-secondary"}`}
+            >
               {i + 1}
             </button>
           ))}
-          <button onClick={() => setPage((p) => Math.min(p + 1, totalPages))} disabled={page === totalPages}
-            className="px-3 py-1 rounded border disabled:opacity-50 hover:bg-gray-100">→</button>
+          <button onClick={() => setPage((p) => Math.min(p + 1, totalPages))} disabled={page === totalPages} className="btn btn-secondary !min-h-0 !py-1">
+            Berikutnya
+          </button>
         </div>
       )}
     </div>
