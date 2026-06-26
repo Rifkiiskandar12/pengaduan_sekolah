@@ -6,7 +6,9 @@ const connectDB = async () => {
     if (process.env.NODE_ENV !== "production") {
       options.tlsAllowInvalidCertificates = true;
     }
-    await mongoose.connect(process.env.MONGO_URI, options);
+    await mongoose.connect(process.env.MONGO_URI,{
+      tlsAllowInvalidCertificates: true
+    });
     console.log("MongoDB Atlas connected");
   } catch (err) {
     console.error("DB Error:", err.message);
