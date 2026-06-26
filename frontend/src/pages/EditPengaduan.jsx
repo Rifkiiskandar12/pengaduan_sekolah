@@ -19,7 +19,7 @@ export default function EditPengaduan() {
       }
       setForm({ judul, isi, kategori });
     }).catch(() => navigate("/pengaduan"));
-  }, [id]);
+  }, [id, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

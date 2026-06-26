@@ -19,7 +19,7 @@ export default function DetailPengaduan() {
       .then((res) => setData(res.data))
       .catch(() => navigate("/pengaduan"))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, navigate]);
 
   if (loading) return <p className="page-subtitle">Memuat...</p>;
   if (!data) return <p className="page-subtitle">Data tidak ditemukan.</p>;
