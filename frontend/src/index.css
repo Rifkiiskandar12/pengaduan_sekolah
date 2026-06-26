@@ -306,6 +306,15 @@
     color: var(--color-subtle-on-ink);
   }
 
+  .dark .auth-context {
+    background: var(--color-paper-2);
+    color: var(--color-ink);
+  }
+
+  .dark .auth-context-text {
+    color: var(--color-ink-2);
+  }
+
   .auth-form-wrap {
     display: grid;
     place-items: center;

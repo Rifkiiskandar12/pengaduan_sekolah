@@ -23,7 +23,7 @@ export default function Login() {
       <section className="auth-context">
         <div>
           <span className="brand-mark mb-6">PS</span>
-          <h1 className="page-title text-[color:var(--color-accent-ink)]">
+          <h1 className="page-title">
             Pengaduan sekolah yang tertata.
           </h1>
           <p className="auth-context-text mt-4 max-w-xl">
