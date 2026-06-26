@@ -6,10 +6,5 @@ export default function PrivateRoute() {
 
   if (!token) return <Navigate to="/" replace />;
 
-  // Redirect siswa langsung ke pengaduan
-  if (user.role === "siswa" && window.location.pathname === "/dashboard") {
-    return <Navigate to="/pengaduan" replace />;
-  }
-
   return <Outlet />;
 }

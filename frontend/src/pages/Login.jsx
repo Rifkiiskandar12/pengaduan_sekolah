@@ -12,7 +12,7 @@ export default function Login() {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate("/dashboard");
+      window.location.href = "/dashboard";
     } catch {
       // Error is handled by the auth hook.
     }
