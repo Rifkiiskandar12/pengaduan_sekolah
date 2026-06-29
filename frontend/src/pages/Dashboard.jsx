@@ -6,7 +6,7 @@ import { usePengaduan } from "../hooks/usePengaduan";
 
 const COLORS = ["var(--color-warning)", "var(--color-info)", "var(--color-success)"];
 const statusColor = {
-  pending: "badge-pending",
+  menunggu: "badge-menunggu",
   diproses: "badge-diproses",
   selesai: "badge-selesai",
 };
@@ -29,7 +29,7 @@ export default function Dashboard() {
       getAll().then((data) => {
         setStats({
           total: data.length,
-          pending: data.filter((d) => d.status === "pending").length,
+          menunggu: data.filter((d) => d.status === "Menunggu").length,
           diproses: data.filter((d) => d.status === "diproses").length,
           selesai: data.filter((d) => d.status === "selesai").length,
         });
@@ -39,13 +39,13 @@ export default function Dashboard() {
 
   const cards = [
     { label: isAdmin ? "Total Pengaduan" : "Pengaduan Saya", value: stats?.total },
-    { label: "Pending", value: stats?.pending },
+    { label: "Menunggu", value: stats?.menunggu },
     { label: "Diproses", value: stats?.diproses },
     { label: "Selesai", value: stats?.selesai },
   ];
 
   const statusData = [
-    { name: "Pending", value: stats?.pending || 0 },
+    { name: "Menunggu", value: stats?.menunggu || 0 },
     { name: "Diproses", value: stats?.diproses || 0 },
     { name: "Selesai", value: stats?.selesai || 0 },
   ];

@@ -46,7 +46,7 @@ export default function DetailPengaduan() {
             setData({ ...data, status: e.target.value });
           }}
             className={`badge ${statusColor[data.status]} border-0`}>
-            <option value="pending">pending</option>
+            <option value="pending">menunggu</option>
             <option value="diproses">diproses</option>
             <option value="selesai">selesai</option>
           </select>
