@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import { usePengaduan } from "../hooks/usePengaduan";
 import { useToast } from "../hooks/useToast";
 import { exportExcel, exportPDF } from "../utils/exportHelper";
+import { Eye, Pencil, Trash2, Archive } from "lucide-react";
 
 const statusColor = {
   pending: "badge-pending",
@@ -128,23 +129,29 @@ export default function ListPengaduan() {
                   )}
                 </td>
                 <td>{new Date(item.createdAt).toLocaleDateString("id-ID")}</td>
-                <td>
-                  <div className="flex flex-wrap gap-2">
-                  <button onClick={() => navigate(`/pengaduan/${item._id}`)} className="btn btn-primary !min-h-0 !py-1 text-xs">
-                    Detail
-                  </button>
-                  {user?.role === "siswa" && item.status === "pending" && (
-                    <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)} className="btn btn-secondary !min-h-0 !py-1 text-xs">
-                      Edit
+                <td className="px-4 py-2">
+                  <div className="flex gap-2 items-center">
+                    <button onClick={() => navigate(`/pengaduan/${item._id}`)}
+                      title="Detail"
+                      className="p-1.5 rounded bg-blue-100 text-blue-600 hover:bg-blue-200">
+                      <Eye size={14} />
+                    </button>
+                  {(user?.role === "siswa" && item.status === "pending") && (
+                    <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)}
+                      title="Edit"
+                      className="p-1.5 rounded bg-yellow-100 text-yellow-600 hover:bg-yellow-200">
+                      <Pencil size={14} />
                     </button>
                   )}
                   {(user?.role === "admin" || (user?.role === "siswa" && item.status === "pending")) && (
-                    <button onClick={() => handleDelete(item._id)} className="btn btn-danger !min-h-0 !py-1 text-xs">
-                      Hapus
+                    <button onClick={() => handleDelete(item._id)}
+                      title="Hapus"
+                      className="p-1.5 rounded bg-red-100 text-red-600 hover:bg-red-200">
+                      <Trash2 size={14} />
                     </button>
                   )}
-                  </div>
-                </td>
+                </div>
+              </td>
               </tr>
             ))}
           </tbody>
