@@ -13,7 +13,7 @@ export default function Sidebar({ open, onClose }) {
       {open && (
         <div onClick={onClose} className="fixed inset-0 bg-black/30 z-20 md:hidden" />
       )}
-      <aside className={`sidebar-panel fixed md:static top-0 left-0 h-screen w-56 p-4 z-30 transform transition-transform
+      <aside className={`sidebar-panel fixed md:relative top-0 left-0 h-screen md:h-auto w-56 shrink-0 p-4 z-30 transform transition-transform
         ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
         <div className="sidebar-brand">
           <span className="brand-mark">PS</span>
