@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Bar, BarChart, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAuth } from "../hooks/useAuth";
+import api from "../services/api";
 import { usePengaduan } from "../hooks/usePengaduan";
 
 const COLORS = ["var(--color-warning)", "var(--color-info)", "var(--color-success)"];
 const statusColor = {
-  pending: "badge-pending",
+  menunggu: "badge-menunggu",
   diproses: "badge-diproses",
   selesai: "badge-selesai",
 };
@@ -13,6 +14,7 @@ const statusColor = {
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [recent, setRecent] = useState([]);
+  const [kategoriList, setKategoriList] = useState([]);
   const { getStats, getAll, loading } = usePengaduan();
   const { getUser } = useAuth();
   const user = getUser();
@@ -22,11 +24,12 @@ export default function Dashboard() {
     if (isAdmin) {
       getStats().then(setStats).catch(() => {});
       getAll().then((data) => setRecent(data.slice(0, 5))).catch(() => {});
+      api.get("/kategori").then(res => setKategoriList(res.data));
     } else {
       getAll().then((data) => {
         setStats({
           total: data.length,
-          pending: data.filter((d) => d.status === "pending").length,
+          menunggu: data.filter((d) => d.status === "Menunggu").length,
           diproses: data.filter((d) => d.status === "diproses").length,
           selesai: data.filter((d) => d.status === "selesai").length,
         });
@@ -36,23 +39,21 @@ export default function Dashboard() {
 
   const cards = [
     { label: isAdmin ? "Total Pengaduan" : "Pengaduan Saya", value: stats?.total },
-    { label: "Pending", value: stats?.pending },
+    { label: "Menunggu", value: stats?.menunggu },
     { label: "Diproses", value: stats?.diproses },
     { label: "Selesai", value: stats?.selesai },
   ];
 
   const statusData = [
-    { name: "Pending", value: stats?.pending || 0 },
+    { name: "Menunggu", value: stats?.menunggu || 0 },
     { name: "Diproses", value: stats?.diproses || 0 },
     { name: "Selesai", value: stats?.selesai || 0 },
   ];
 
-  const kategoriData = [
-    { name: "Fasilitas", value: recent.filter((d) => d.kategori === "fasilitas").length },
-    { name: "Akademik", value: recent.filter((d) => d.kategori === "akademik").length },
-    { name: "Bullying", value: recent.filter((d) => d.kategori === "bullying").length },
-    { name: "Lainnya", value: recent.filter((d) => d.kategori === "lainnya").length },
-  ];
+  const kategoriData = kategoriList.map(k => ({
+    name: k.nama,
+    value: recent.filter((d) => d.kategori === k.nama).length
+  }));
 
   return (
     <div className="page-wrap">

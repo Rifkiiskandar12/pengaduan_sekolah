@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
+import { useAuth } from "../hooks/useAuth";
 
 const statusColor = {
   pending: "badge-pending",
@@ -13,6 +14,9 @@ export default function DetailPengaduan() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { getUser } = useAuth();
+  const user = getUser();
+
 
   useEffect(() => {
     api.get(`/pengaduan/${id}`)
@@ -35,7 +39,20 @@ export default function DetailPengaduan() {
 
         <div className="flex flex-wrap gap-3 mb-4">
           <span className="badge badge-neutral capitalize">{data.kategori}</span>
+          {(user?.role === "admin" || user?.role === "guru") ? (
+          <select value={data.status}
+            onChange={async (e) => {
+            await api.put(`/pengaduan/${id}`, { status: e.target.value });
+            setData({ ...data, status: e.target.value });
+          }}
+            className={`badge ${statusColor[data.status]} border-0`}>
+            <option value="pending">menunggu</option>
+            <option value="diproses">diproses</option>
+            <option value="selesai">selesai</option>
+          </select>
+          ) : (
           <span className={`badge ${statusColor[data.status]}`}>{data.status}</span>
+          )}
         </div>
 
         <p className="text-[color:var(--color-ink-2)] mb-6 leading-relaxed">{data.isi}</p>

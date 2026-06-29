@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import { useToast } from "../hooks/useToast";
@@ -13,6 +13,14 @@ export default function FormPengaduan() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
+  const [kategoriList, setKategoriList] = useState([]);
+
+  useEffect(() => {
+    api.get("/kategori").then(res => {
+      setKategoriList(res.data);
+      if (res.data.length > 0) setKategori(res.data[0].nama);
+    });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,10 +66,9 @@ export default function FormPengaduan() {
         <div>
           <label className="field-label">Kategori</label>
           <select value={kategori} onChange={(e) => setKategori(e.target.value)} className="field">
-            <option value="fasilitas">Fasilitas</option>
-            <option value="akademik">Akademik</option>
-            <option value="bullying">Bullying</option>
-            <option value="lainnya">Lainnya</option>
+            {kategoriList.map(k => (
+              <option key={k._id} value={k.nama}>{k.nama}</option>
+            ))}
           </select>
         </div>
 
@@ -72,8 +79,25 @@ export default function FormPengaduan() {
 
         <div>
           <label className="field-label">Lampiran Gambar (opsional)</label>
-          <input type="file" accept="image/*" onChange={(e) => setGambar(e.target.files[0])} className="field text-sm" />
-          <p className="text-xs text-[color:var(--color-muted)] mt-1">Max 2MB, format JPG/PNG</p>
+         <input type="file" accept="image/jpeg,image/png,image/jpg"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+              if (file.size > 2 * 1024 * 1024) {
+                setError("Ukuran file maksimal 2MB");
+                e.target.value = "";
+                return;
+              }
+              if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
+                setError("Format file harus JPG atau PNG");
+                e.target.value = "";
+                return;
+              }
+              setError(null);
+              setGambar(file);
+            }}
+            className="w-full text-sm dark:text-gray-200" />
+          <p className="text-xs text-gray-500 mt-1">Max 2MB, format JPG/PNG</p>
         </div>
 
         <button type="submit" disabled={loading} className="btn btn-primary">

@@ -64,6 +64,7 @@ exports.update = async (req, res, next) => {
       if (judul !== undefined) data.judul = judul;
       if (isi !== undefined) data.isi = isi;
       if (kategori !== undefined) data.kategori = kategori;
+      if (req.file) data.gambar = req.file.filename;
     }
 
     await data.save();

@@ -4,7 +4,9 @@ import Toast from "../components/Toast";
 import { useAuth } from "../hooks/useAuth";
 import { usePengaduan } from "../hooks/usePengaduan";
 import { useToast } from "../hooks/useToast";
+import api from "../services/api";
 import { exportExcel, exportPDF } from "../utils/exportHelper";
+import { Eye, Pencil, Trash2, Archive } from "lucide-react";
 
 const statusColor = {
   pending: "badge-pending",
@@ -16,6 +18,7 @@ export default function ListPengaduan() {
   const [data, setData] = useState([]);
   const [kategori, setKategori] = useState("");
   const [search, setSearch] = useState("");
+  const [kategoriList, setKategoriList] = useState([]);
   const [page, setPage] = useState(1);
   const limitPerPage = 5;
   const { getAll, update, remove, loading, error } = usePengaduan();
@@ -50,6 +53,10 @@ export default function ListPengaduan() {
     }
   };
 
+  useEffect(() => {
+  api.get("/kategori").then(res => setKategoriList(res.data));
+}, []);
+
   // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [kategori]);
 
@@ -76,12 +83,12 @@ export default function ListPengaduan() {
           onKeyDown={(e) => e.key === "Enter" && fetchData()}
           className="field flex-1 min-w-40"
         />
-        <select value={kategori} onChange={(e) => setKategori(e.target.value)} className="field md:w-auto">
+        <select value={kategori} onChange={(e) => setKategori(e.target.value)}
+          className="border rounded px-3 py-2 dark:bg-gray-700 dark:text-white dark:border-gray-600">
           <option value="">Semua Kategori</option>
-          <option value="fasilitas">Fasilitas</option>
-          <option value="akademik">Akademik</option>
-          <option value="bullying">Bullying</option>
-          <option value="lainnya">Lainnya</option>
+          {kategoriList.map(k => (
+            <option key={k._id} value={k.nama}>{k.nama}</option>
+          ))}
         </select>
         <button onClick={fetchData} className="btn btn-primary">Cari</button>
         <button onClick={() => exportPDF(data)} className="btn btn-danger">PDF</button>
@@ -119,7 +126,7 @@ export default function ListPengaduan() {
                       onChange={(e) => handleStatusChange(item._id, e.target.value)}
                       className={`badge border-0 ${statusColor[item.status]}`}
                     >
-                      <option value="pending">pending</option>
+                      <option value="pending">menunggu</option>
                       <option value="diproses">diproses</option>
                       <option value="selesai">selesai</option>
                     </select>
@@ -128,23 +135,29 @@ export default function ListPengaduan() {
                   )}
                 </td>
                 <td>{new Date(item.createdAt).toLocaleDateString("id-ID")}</td>
-                <td>
-                  <div className="flex flex-wrap gap-2">
-                  <button onClick={() => navigate(`/pengaduan/${item._id}`)} className="btn btn-primary !min-h-0 !py-1 text-xs">
-                    Detail
-                  </button>
-                  {user?.role === "siswa" && item.status === "pending" && (
-                    <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)} className="btn btn-secondary !min-h-0 !py-1 text-xs">
-                      Edit
+                <td className="px-4 py-2">
+                  <div className="flex gap-2 items-center">
+                    <button onClick={() => navigate(`/pengaduan/${item._id}`)}
+                      title="Detail"
+                      className="p-1.5 rounded bg-blue-100 text-blue-600 hover:bg-blue-200">
+                      <Eye size={14} />
+                    </button>
+                  {(user?.role === "siswa" && item.status === "pending") && (
+                    <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)}
+                      title="Edit"
+                      className="p-1.5 rounded bg-yellow-100 text-yellow-600 hover:bg-yellow-200">
+                      <Pencil size={14} />
                     </button>
                   )}
                   {(user?.role === "admin" || (user?.role === "siswa" && item.status === "pending")) && (
-                    <button onClick={() => handleDelete(item._id)} className="btn btn-danger !min-h-0 !py-1 text-xs">
-                      Hapus
+                    <button onClick={() => handleDelete(item._id)}
+                      title="Hapus"
+                      className="p-1.5 rounded bg-red-100 text-red-600 hover:bg-red-200">
+                      <Trash2 size={14} />
                     </button>
                   )}
-                  </div>
-                </td>
+                </div>
+              </td>
               </tr>
             ))}
           </tbody>

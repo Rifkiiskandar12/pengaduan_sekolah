@@ -28,6 +28,12 @@ export default function Sidebar({ open, onClose }) {
           {user?.role === "siswa" && (
             <NavLink to="/pengaduan/tambah" className={linkClass}>Buat Pengaduan</NavLink>
           )}
+          {(user?.role === "admin") && (
+            <>
+              <NavLink to="/pengguna" className={linkClass}>Kelola Pengguna</NavLink>
+              <NavLink to="/kategori" className={linkClass}>Kelola Kategori</NavLink>
+            </>
+          )}
         </nav>
       </aside>
     </>
