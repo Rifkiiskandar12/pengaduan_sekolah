@@ -4,6 +4,7 @@ import Toast from "../components/Toast";
 import { useAuth } from "../hooks/useAuth";
 import { usePengaduan } from "../hooks/usePengaduan";
 import { useToast } from "../hooks/useToast";
+import api from "../services/api";
 import { exportExcel, exportPDF } from "../utils/exportHelper";
 import { Eye, Pencil, Trash2, Archive } from "lucide-react";
 
@@ -17,6 +18,7 @@ export default function ListPengaduan() {
   const [data, setData] = useState([]);
   const [kategori, setKategori] = useState("");
   const [search, setSearch] = useState("");
+  const [kategoriList, setKategoriList] = useState([]);
   const [page, setPage] = useState(1);
   const limitPerPage = 5;
   const { getAll, update, remove, loading, error } = usePengaduan();
@@ -51,6 +53,10 @@ export default function ListPengaduan() {
     }
   };
 
+  useEffect(() => {
+  api.get("/kategori").then(res => setKategoriList(res.data));
+}, []);
+
   // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [kategori]);
 
@@ -77,12 +83,12 @@ export default function ListPengaduan() {
           onKeyDown={(e) => e.key === "Enter" && fetchData()}
           className="field flex-1 min-w-40"
         />
-        <select value={kategori} onChange={(e) => setKategori(e.target.value)} className="field md:w-auto">
+        <select value={kategori} onChange={(e) => setKategori(e.target.value)}
+          className="border rounded px-3 py-2 dark:bg-gray-700 dark:text-white dark:border-gray-600">
           <option value="">Semua Kategori</option>
-          <option value="fasilitas">Fasilitas</option>
-          <option value="akademik">Akademik</option>
-          <option value="bullying">Bullying</option>
-          <option value="lainnya">Lainnya</option>
+          {kategoriList.map(k => (
+            <option key={k._id} value={k.nama}>{k.nama}</option>
+          ))}
         </select>
         <button onClick={fetchData} className="btn btn-primary">Cari</button>
         <button onClick={() => exportPDF(data)} className="btn btn-danger">PDF</button>
@@ -120,7 +126,7 @@ export default function ListPengaduan() {
                       onChange={(e) => handleStatusChange(item._id, e.target.value)}
                       className={`badge border-0 ${statusColor[item.status]}`}
                     >
-                      <option value="pending">pending</option>
+                      <option value="pending">menunggu</option>
                       <option value="diproses">diproses</option>
                       <option value="selesai">selesai</option>
                     </select>

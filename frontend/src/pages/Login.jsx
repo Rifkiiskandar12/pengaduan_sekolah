@@ -34,7 +34,7 @@ export default function Login() {
 
       <div className="auth-form-wrap">
         <form onSubmit={handleSubmit} className="auth-card panel p-8">
-          <h1 className="section-title mb-2">Login</h1>
+          <h1 className="section-title mb-2">Masuk</h1>
           <p className="page-subtitle mb-6">Masukkan email dan password akun.</p>
 
           {error && <p className="alert alert-error mb-4">{error}</p>}

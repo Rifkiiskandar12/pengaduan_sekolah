@@ -31,7 +31,7 @@ export default function Navbar({ user, onLogout, onMenuClick }) {
           {user?.name} ({user?.role})
         </span>
         <button onClick={onLogout} className="btn btn-danger !min-h-0 !py-1 text-sm">
-          Logout
+          Keluar
         </button>
       </div>
     </nav>

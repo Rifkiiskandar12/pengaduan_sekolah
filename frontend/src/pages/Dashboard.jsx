@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bar, BarChart, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAuth } from "../hooks/useAuth";
+import api from "../services/api";
 import { usePengaduan } from "../hooks/usePengaduan";
 
 const COLORS = ["var(--color-warning)", "var(--color-info)", "var(--color-success)"];
@@ -13,6 +14,7 @@ const statusColor = {
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [recent, setRecent] = useState([]);
+  const [kategoriList, setKategoriList] = useState([]);
   const { getStats, getAll, loading } = usePengaduan();
   const { getUser } = useAuth();
   const user = getUser();
@@ -22,6 +24,7 @@ export default function Dashboard() {
     if (isAdmin) {
       getStats().then(setStats).catch(() => {});
       getAll().then((data) => setRecent(data.slice(0, 5))).catch(() => {});
+      api.get("/kategori").then(res => setKategoriList(res.data));
     } else {
       getAll().then((data) => {
         setStats({
@@ -47,12 +50,10 @@ export default function Dashboard() {
     { name: "Selesai", value: stats?.selesai || 0 },
   ];
 
-  const kategoriData = [
-    { name: "Fasilitas", value: recent.filter((d) => d.kategori === "fasilitas").length },
-    { name: "Akademik", value: recent.filter((d) => d.kategori === "akademik").length },
-    { name: "Bullying", value: recent.filter((d) => d.kategori === "bullying").length },
-    { name: "Lainnya", value: recent.filter((d) => d.kategori === "lainnya").length },
-  ];
+  const kategoriData = kategoriList.map(k => ({
+    name: k.nama,
+    value: recent.filter((d) => d.kategori === k.nama).length
+  }));
 
   return (
     <div className="page-wrap">
