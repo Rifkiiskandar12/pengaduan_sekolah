@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import { useToast } from "../hooks/useToast";
@@ -13,6 +13,14 @@ export default function FormPengaduan() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
+  const [kategoriList, setKategoriList] = useState([]);
+
+  useEffect(() => {
+    api.get("/kategori").then(res => {
+      setKategoriList(res.data);
+      if (res.data.length > 0) setKategori(res.data[0].nama);
+    });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,10 +66,9 @@ export default function FormPengaduan() {
         <div>
           <label className="field-label">Kategori</label>
           <select value={kategori} onChange={(e) => setKategori(e.target.value)} className="field">
-            <option value="fasilitas">Fasilitas</option>
-            <option value="akademik">Akademik</option>
-            <option value="bullying">Bullying</option>
-            <option value="lainnya">Lainnya</option>
+            {kategoriList.map(k => (
+              <option key={k._id} value={k.nama}>{k.nama}</option>
+            ))}
           </select>
         </div>
 

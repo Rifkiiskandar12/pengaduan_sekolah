@@ -12,6 +12,11 @@ export default function EditPengaduan() {
   const [data, setData] = useState(null);
   const [gambar, setGambar] = useState(null);
   const [error, setError] = useState(null);
+  const [kategoriList, setKategoriList] = useState([]);
+
+  useEffect(() => {
+    api.get("/kategori").then(res => setKategoriList(res.data));
+  }, []);
 
   useEffect(() => {
     api.get(`/pengaduan/${id}`).then((res) => {
@@ -69,15 +74,10 @@ export default function EditPengaduan() {
 
         <div>
           <label className="field-label">Kategori</label>
-          <select
-            value={form.kategori}
-            onChange={(e) => setForm({ ...form, kategori: e.target.value })}
-            className="field"
-          >
-            <option value="fasilitas">Fasilitas</option>
-            <option value="akademik">Akademik</option>
-            <option value="bullying">Bullying</option>
-            <option value="lainnya">Lainnya</option>
+          <select value={form.kategori} onChange={(e) => setForm({ ...form, kategori: e.target.value })} className="field">
+            {kategoriList.map(k => (
+              <option key={k._id} value={k.nama}>{k.nama}</option>
+            ))}
           </select>
         </div>
 
