@@ -16,7 +16,7 @@ export default function Navbar({ user, onLogout, onMenuClick }) {
           <span className="block w-5 h-0.5 bg-current mt-1"></span>
         </button>
         <span className="brand-mark">PS</span>
-        <h1 className="topbar-title truncate">Sistem Pengaduan Sekolah</h1>
+        <h1 className="topbar-title truncate">SIPEKA (Sistem Informasi Pengaduan & Keluhan Akademik)</h1>
       </div>
 
       <div className="flex items-center gap-3">

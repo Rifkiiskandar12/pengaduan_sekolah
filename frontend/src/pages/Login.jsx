@@ -22,17 +22,14 @@ export default function Login() {
     <div className="auth-screen">
       <section className="auth-context">
         <div>
-          <span className="brand-mark mb-6">PS</span>
+          <span className="brand-mark mb-6">SIPEKA</span>
           <h1 className="page-title">
-            Pengaduan sekolah yang tertata.
+            SIPEKA (Sistem Informasi Pengaduan & Keluhan Akademik)
           </h1>
           <p className="auth-context-text mt-4 max-w-xl">
-            Masuk untuk mencatat laporan, memantau status, dan membantu sekolah merespons masalah dengan jelas.
+            Platform terintegrasi untuk pencatatan, pemantauan, dan penanganan keluhan akademik di lingkungan sekolah. Memberikan transparansi dan efisiensi dalam komunikasi antara siswa dan pihak sekolah.
           </p>
         </div>
-        <p className="auth-context-text text-sm">
-          Akses untuk siswa, guru, dan admin.
-        </p>
       </section>
 
       <div className="auth-form-wrap">

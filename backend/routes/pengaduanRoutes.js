@@ -13,7 +13,7 @@ router.get("/dashboard/stats", protect, guruOrAdmin, ctrl.stats);
 router.get("/", protect, ctrl.getAll);
 router.get("/:id", protect, ctrl.getOne);
 router.post("/", protect, upload.single("gambar"), ctrl.create);
-router.put("/:id", protect, ctrl.update);
+router.put("/:id", protect, upload.single("gambar"), ctrl.update);
 router.delete("/:id", protect, ctrl.remove);
 
 module.exports = router;
