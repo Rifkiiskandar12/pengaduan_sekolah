@@ -8,6 +8,7 @@ import DetailPengaduan from "./pages/DetailPengaduan";
 import MainLayout from "./layouts/MainLayout";
 import PrivateRoute from "./utils/PrivateRoute";
 import EditPengaduan from "./pages/EditPengaduan";
+import KelolaPengguna from "./pages/KelolaPengguna";
 
 function App() {
   return (
@@ -17,12 +18,13 @@ function App() {
         <Route path="/register" element={<Register />} />
         
         <Route element={<PrivateRoute />}>
-          <Route path="/pengaduan/edit/:id" element={<EditPengaduan />} />
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/pengaduan" element={<ListPengaduan />} />
             <Route path="/pengaduan/tambah" element={<FormPengaduan />} />
             <Route path="/pengaduan/:id" element={<DetailPengaduan />} />
+            <Route path="/pengguna" element={<KelolaPengguna />} />
+            <Route path="/pengaduan/edit/:id" element={<EditPengaduan />} />
           </Route>
         </Route>
       </Routes>
