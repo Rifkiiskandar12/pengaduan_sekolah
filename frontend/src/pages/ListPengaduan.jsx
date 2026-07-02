@@ -9,7 +9,7 @@ import { exportExcel, exportPDF } from "../utils/exportHelper";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
 const statusColor = {
-  pending: "badge-pending",
+  menunggu: "badge-menunggu",
   diproses: "badge-diproses",
   selesai: "badge-selesai",
 };
@@ -95,7 +95,7 @@ export default function ListPengaduan() {
         <select value={status} onChange={(e) => setStatus(e.target.value)}
           className="field">
           <option value="">Semua Status</option>
-          <option value="pending">Menunggu</option>
+          <option value="menunggu">Menunggu</option>
           <option value="diproses">Diproses</option>
           <option value="selesai">Selesai</option>
         </select>
@@ -129,19 +129,7 @@ export default function ListPengaduan() {
                 <td>{item.judul}</td>
                 <td className="capitalize">{item.kategori}</td>
                 <td>
-                  {user?.role === "admin" || user?.role === "guru" ? (
-                    <select
-                      value={item.status}
-                      onChange={(e) => handleStatusChange(item._id, e.target.value)}
-                      className={`badge border-0 ${statusColor[item.status]}`}
-                    >
-                      <option value="pending">menunggu</option>
-                      <option value="diproses">diproses</option>
-                      <option value="selesai">selesai</option>
-                    </select>
-                  ) : (
-                    <span className={`badge ${statusColor[item.status]}`}>{item.status}</span>
-                  )}
+                  <span className={`badge ${statusColor[item.status]}`}>{item.status}</span>
                 </td>
                 <td>{new Date(item.createdAt).toLocaleDateString("id-ID")}</td>
                 <td className="px-4 py-2">
@@ -151,14 +139,14 @@ export default function ListPengaduan() {
                       className="action-icon">
                       <Eye size={14} />
                     </button>
-                  {(user?.role === "siswa" && item.status === "pending") && (
+                  {(user?.role === "siswa" && item.status === "menunggu") && (
                     <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)}
                       title="Edit"
                       className="action-icon">
                       <Pencil size={14} />
                     </button>
                   )}
-                  {(user?.role === "admin" || (user?.role === "siswa" && item.status === "pending")) && (
+                  {(user?.role === "admin" || (user?.role === "siswa" && item.status === "menunggu")) && (
                     <button onClick={() => handleDelete(item._id)}
                       title="Hapus"
                       className="action-icon action-icon-danger">
