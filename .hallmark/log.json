@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-07-02",
+    "scope": "app",
+    "macrostructure": "Magazine Workbench",
+    "theme": "VoiceBox editorial operations",
+    "enrichment": "none",
+    "brief": "Redesign school complaint app using the VoiceBox high-contrast editorial design system"
+  },
+  {
     "date": "2026-06-26",
     "scope": "app",
     "macrostructure": "Workbench",

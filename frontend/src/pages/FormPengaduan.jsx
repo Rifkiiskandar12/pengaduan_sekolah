@@ -96,8 +96,8 @@ export default function FormPengaduan() {
               setError(null);
               setGambar(file);
             }}
-            className="w-full text-sm dark:text-gray-200" />
-          <p className="text-xs text-gray-500 mt-1">Max 2MB, format JPG/PNG</p>
+            className="field" />
+          <p className="file-note mt-1">Max 2MB, format JPG/PNG</p>
         </div>
 
         <button type="submit" disabled={loading} className="btn btn-primary">
