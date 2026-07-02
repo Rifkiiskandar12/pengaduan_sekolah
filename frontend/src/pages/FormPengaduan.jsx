@@ -59,12 +59,12 @@ export default function FormPengaduan() {
         {error && <p className="alert alert-error mb-4">{error}</p>}
 
         <div>
-          <label className="field-label">Judul</label>
+          <label className="field-label">Judul<span className="text-red-500">*</span></label>
           <input type="text" value={judul} onChange={(e) => setJudul(e.target.value)} required className="field" />
         </div>
 
         <div>
-          <label className="field-label">Kategori</label>
+          <label className="field-label">Kategori<span className="text-red-500">*</span></label>
           <select value={kategori} onChange={(e) => setKategori(e.target.value)} className="field">
             {kategoriList.map(k => (
               <option key={k._id} value={k.nama}>{k.nama}</option>
@@ -73,7 +73,7 @@ export default function FormPengaduan() {
         </div>
 
         <div>
-          <label className="field-label">Isi Pengaduan</label>
+          <label className="field-label">Isi Pengaduan<span className="text-red-500">*</span></label>
           <textarea value={isi} onChange={(e) => setIsi(e.target.value)} required rows={5} className="field" />
         </div>
 
