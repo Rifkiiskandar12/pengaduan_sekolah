@@ -24,7 +24,7 @@ export default function Sidebar({ open, onClose }) {
         </div>
         <nav className="flex flex-col gap-2" onClick={onClose}>
           <NavLink to="/dashboard" className={linkClass}>Dashboard</NavLink>
-          <NavLink to="/pengaduan" end className={linkClass}>Daftar Pengaduan</NavLink>
+          <NavLink to="/pengaduan" end className={linkClass}>Kelola Pengaduan</NavLink>
           {user?.role === "siswa" && (
             <NavLink to="/pengaduan/tambah" className={linkClass}>Buat Pengaduan</NavLink>
           )}
