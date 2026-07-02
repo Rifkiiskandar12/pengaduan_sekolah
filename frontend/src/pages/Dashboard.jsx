@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
-import { Bar, BarChart, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Bar, BarChart, Cell, Legend, Line, LineChart,
+  Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis
+} from "recharts";
 import { useAuth } from "../hooks/useAuth";
 import api from "../services/api";
 import { usePengaduan } from "../hooks/usePengaduan";
 
 const COLORS = ["var(--color-warning)", "var(--color-info)", "var(--color-success)"];
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+
+// FIX: key disesuaikan dengan nilai status dari backend (lowercase)
 const statusColor = {
-  menunggu: "badge-menunggu",
+  pending: "badge-pending",
   diproses: "badge-diproses",
   selesai: "badge-selesai",
 };
@@ -15,37 +21,60 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [recent, setRecent] = useState([]);
   const [kategoriList, setKategoriList] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
   const { getStats, getAll, loading } = usePengaduan();
   const { getUser } = useAuth();
   const user = getUser();
   const isAdmin = user?.role === "admin" || user?.role === "guru";
 
+  function buildMonthlyData(data) {
+    const counts = Array.from({ length: 12 }, (_, i) => ({
+      name: MONTH_NAMES[i],
+      total: 0,
+      selesai: 0,
+    }));
+    data.forEach((item) => {
+      const month = new Date(item.createdAt).getMonth();
+      if (month >= 0 && month < 12) {
+        counts[month].total += 1;
+        if (item.status === "selesai") counts[month].selesai += 1;
+      }
+    });
+    setMonthlyData(counts);
+  }
+
   useEffect(() => {
     if (isAdmin) {
       getStats().then(setStats).catch(() => {});
-      getAll().then((data) => setRecent(data.slice(0, 5))).catch(() => {});
+      getAll().then((data) => {
+        setRecent(data.slice(0, 5));
+        // Bangun data statistik per bulan
+        buildMonthlyData(data);
+      }).catch(() => {});
       api.get("/kategori").then(res => setKategoriList(res.data));
     } else {
       getAll().then((data) => {
+        // FIX: status dari backend adalah "pending", bukan "Menunggu"
         setStats({
           total: data.length,
-          menunggu: data.filter((d) => d.status === "Menunggu").length,
+          pending: data.filter((d) => d.status === "pending").length,
           diproses: data.filter((d) => d.status === "diproses").length,
           selesai: data.filter((d) => d.status === "selesai").length,
         });
       }).catch(() => {});
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const cards = [
     { label: isAdmin ? "Total Pengaduan" : "Pengaduan Saya", value: stats?.total },
-    { label: "Menunggu", value: stats?.menunggu },
+    { label: "Menunggu", value: isAdmin ? stats?.pending : stats?.pending },
     { label: "Diproses", value: stats?.diproses },
     { label: "Selesai", value: stats?.selesai },
   ];
 
   const statusData = [
-    { name: "Menunggu", value: stats?.menunggu || 0 },
+    { name: "Menunggu", value: stats?.pending || 0 },
     { name: "Diproses", value: stats?.diproses || 0 },
     { name: "Selesai", value: stats?.selesai || 0 },
   ];
@@ -66,6 +95,7 @@ export default function Dashboard() {
 
       {loading && <p className="page-subtitle">Memuat...</p>}
 
+      {/* Kartu Statistik */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {cards.map((card) => (
           <div key={card.label} className="metric-card">
@@ -77,6 +107,7 @@ export default function Dashboard() {
 
       {isAdmin && (
         <>
+          {/* Grafik Kategori & Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="panel p-4">
               <h2 className="section-title mb-4">Grafik Per Kategori</h2>
@@ -85,7 +116,7 @@ export default function Dashboard() {
                   <XAxis dataKey="name" />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Bar dataKey="value" fill="var(--color-accent)" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="value" fill="var(--color-accent)" radius={[0, 0, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -104,6 +135,38 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Grafik Statistik Per Bulan */}
+          <div className="panel p-4 mb-6">
+            <h2 className="section-title mb-4">Statistik Pengaduan Per Bulan</h2>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={monthlyData}>
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Legend wrapperStyle={{ color: "var(--color-ink)" }} />
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  name="Total Masuk"
+                  stroke="var(--color-accent)"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="selesai"
+                  name="Selesai"
+                  stroke="var(--color-success)"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Tabel 5 Pengaduan Terbaru */}
           <div className="panel table-wrap">
             <div className="panel-header">
               <h2 className="section-title">5 Pengaduan Terbaru</h2>

@@ -93,7 +93,7 @@ export default function EditPengaduan() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Ganti Foto (opsional)</label>
+          <label className="field-label">Ganti Foto (opsional)</label>
           <input type="file" accept="image/jpeg,image/png,image/jpg"
             onChange={(e) => {
               const file = e.target.files[0];
@@ -111,11 +111,11 @@ export default function EditPengaduan() {
               setError(null);
               setGambar(file);
             }}
-            className="w-full text-sm dark:text-gray-200" />
-          <p className="text-xs text-gray-500 mt-1">Max 2MB, format JPG/PNG</p>
+            className="field" />
+          <p className="file-note mt-1">Max 2MB, format JPG/PNG</p>
           {data?.gambar && !gambar && (
             <img src={`http://localhost:5000/uploads/${data.gambar}`}
-              alt="Foto saat ini" className="mt-2 max-h-32 rounded object-contain" />
+              alt="Foto saat ini" className="mt-2 max-h-32 object-contain border-2 border-[color:var(--color-rule-strong)]" />
           )}
         </div>
 

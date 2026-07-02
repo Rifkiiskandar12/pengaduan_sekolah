@@ -10,11 +10,6 @@ export default function KelolaKategori() {
   const [error, setError] = useState(null);
   const { toast, showToast, hideToast } = useToast();
 
-  const fetchKategori = async () => {
-    const res = await api.get("/kategori");
-    setKategori(res.data);
-  };
-
   const handleAdd = async (e) => {
     e.preventDefault();
     setError(null);
@@ -35,43 +30,61 @@ export default function KelolaKategori() {
     showToast("Kategori dihapus!", "error");
   };
 
-  useEffect(() => { fetchKategori(); }, []);
+  useEffect(() => {
+    let active = true;
+
+    async function loadKategori() {
+      const res = await api.get("/kategori");
+      if (active) setKategori(res.data);
+    }
+
+    loadKategori().catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
-    <div>
+    <div className="page-wrap">
       {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
-      <h1 className="text-2xl font-bold mb-4">Kelola Kategori</h1>
+      <header className="page-head">
+        <div>
+          <h1 className="page-title">Kelola Kategori</h1>
+          <p className="page-subtitle">Jaga pilihan kategori tetap rapi untuk proses pengaduan.</p>
+        </div>
+      </header>
 
       {/* Form tambah */}
-      <form onSubmit={handleAdd} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6 flex gap-2 max-w-lg">
+      <form onSubmit={handleAdd} className="panel panel-strong p-4 mb-6 flex flex-wrap gap-2 max-w-lg">
         <input type="text" value={nama} onChange={(e) => setNama(e.target.value)}
           placeholder="Nama kategori baru..." required
-          className="flex-1 border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600" />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+          className="field flex-1 min-w-40" />
+        <button type="submit" className="btn btn-primary">
           Tambah
         </button>
       </form>
-      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+      {error && <p className="alert alert-error mb-4">{error}</p>}
 
       {/* Daftar kategori */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto max-w-lg">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-100 dark:bg-gray-700">
+      <div className="panel table-wrap max-w-lg">
+        <table className="data-table">
+          <thead>
             <tr>
-              <th className="px-4 py-2">Nama Kategori</th>
-              <th className="px-4 py-2">Aksi</th>
+              <th>Nama Kategori</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody>
             {kategori.length === 0 && (
-              <tr><td colSpan={2} className="px-4 py-4 text-center text-gray-400">Belum ada kategori</td></tr>
+              <tr><td colSpan={2} className="text-center text-[color:var(--color-muted)]">Belum ada kategori</td></tr>
             )}
             {kategori.map((k) => (
-              <tr key={k._id} className="border-t">
-                <td className="px-4 py-2 capitalize">{k.nama}</td>
-                <td className="px-4 py-2">
+              <tr key={k._id}>
+                <td className="capitalize font-bold">{k.nama}</td>
+                <td>
                   <button onClick={() => handleDelete(k._id)}
-                    className="p-1.5 rounded bg-red-100 text-red-600 hover:bg-red-200">
+                    className="action-icon action-icon-danger">
                     <Trash2 size={14} />
                   </button>
                 </td>

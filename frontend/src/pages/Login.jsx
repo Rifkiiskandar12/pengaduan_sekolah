@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading, error } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +21,7 @@ export default function Login() {
     <div className="auth-screen">
       <section className="auth-context">
         <div>
-          <span className="brand-mark mb-6">SIPEKA</span>
+          <span className="brand-mark mb-6">PS</span>
           <h1 className="page-title">
             SIPEKA (Sistem Informasi Pengaduan & Keluhan Akademik)
           </h1>

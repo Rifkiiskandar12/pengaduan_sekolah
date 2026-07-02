@@ -6,7 +6,7 @@ import { usePengaduan } from "../hooks/usePengaduan";
 import { useToast } from "../hooks/useToast";
 import api from "../services/api";
 import { exportExcel, exportPDF } from "../utils/exportHelper";
-import { Eye, Pencil, Trash2, Archive } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 
 const statusColor = {
   pending: "badge-pending",
@@ -17,6 +17,7 @@ const statusColor = {
 export default function ListPengaduan() {
   const [data, setData] = useState([]);
   const [kategori, setKategori] = useState("");
+  const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [kategoriList, setKategoriList] = useState([]);
   const [page, setPage] = useState(1);
@@ -30,6 +31,7 @@ export default function ListPengaduan() {
   const fetchData = async () => {
     const params = {};
     if (kategori) params.kategori = kategori;
+    if (status) params.status = status;
     if (search) params.search = search;
     const res = await getAll(params);
     setData(res);
@@ -58,7 +60,7 @@ export default function ListPengaduan() {
 }, []);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
-  useEffect(() => { fetchData(); }, [kategori]);
+  useEffect(() => { fetchData(); }, [kategori, status]);
 
   const totalPages = Math.ceil(data.length / limitPerPage);
   const paginated = data.slice((page - 1) * limitPerPage, page * limitPerPage);
@@ -84,11 +86,18 @@ export default function ListPengaduan() {
           className="field flex-1 min-w-40"
         />
         <select value={kategori} onChange={(e) => setKategori(e.target.value)}
-          className="border rounded px-3 py-2 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+          className="field">
           <option value="">Semua Kategori</option>
           {kategoriList.map(k => (
             <option key={k._id} value={k.nama}>{k.nama}</option>
           ))}
+        </select>
+        <select value={status} onChange={(e) => setStatus(e.target.value)}
+          className="field">
+          <option value="">Semua Status</option>
+          <option value="pending">Menunggu</option>
+          <option value="diproses">Diproses</option>
+          <option value="selesai">Selesai</option>
         </select>
         <button onClick={fetchData} className="btn btn-primary">Cari</button>
         <button onClick={() => exportPDF(data)} className="btn btn-danger">PDF</button>
@@ -139,20 +148,20 @@ export default function ListPengaduan() {
                   <div className="flex gap-2 items-center">
                     <button onClick={() => navigate(`/pengaduan/${item._id}`)}
                       title="Detail"
-                      className="p-1.5 rounded bg-blue-100 text-blue-600 hover:bg-blue-200">
+                      className="action-icon">
                       <Eye size={14} />
                     </button>
                   {(user?.role === "siswa" && item.status === "pending") && (
                     <button onClick={() => navigate(`/pengaduan/edit/${item._id}`)}
                       title="Edit"
-                      className="p-1.5 rounded bg-yellow-100 text-yellow-600 hover:bg-yellow-200">
+                      className="action-icon">
                       <Pencil size={14} />
                     </button>
                   )}
                   {(user?.role === "admin" || (user?.role === "siswa" && item.status === "pending")) && (
                     <button onClick={() => handleDelete(item._id)}
                       title="Hapus"
-                      className="p-1.5 rounded bg-red-100 text-red-600 hover:bg-red-200">
+                      className="action-icon action-icon-danger">
                       <Trash2 size={14} />
                     </button>
                   )}

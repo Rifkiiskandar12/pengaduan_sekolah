@@ -78,7 +78,7 @@ export default function DetailPengaduan() {
             <img
               src={`http://localhost:5000/uploads/${data.gambar}`}
               alt="Lampiran"
-              className="rounded-[var(--radius-card)] max-w-full max-h-64 object-contain border border-[color:var(--color-rule)]"
+              className="max-w-full max-h-64 object-contain border-2 border-[color:var(--color-rule-strong)]"
             />
           </div>
         )}
